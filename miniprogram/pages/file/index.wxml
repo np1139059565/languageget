@@ -1,0 +1,15 @@
+<!--index.wxml-->
+<view class="container">
+  <editor class="c-edit" id="i-edit" bindinput="refushEditConter"></editor>
+  <view class="c-buttons">
+    <view wx:for="{{dButtons}}" class="c-b-node c-click" catchtap="{{item.ev}}"
+          data-event1-data1="{{item.evData}}">{{item.text}}</view>
+  </view>
+
+  <view class="c-absolute">absolute:{{absolutePath}}</view>
+  <view class="c-dirs">
+    <view class="c-d-child" wx:for="{{childArr}}"
+          catchtap="clickChild" data-event1-data1="{{item.eventData}}"
+          catchlongpress="removeChild">{{item.text}}</view>
+  </view>
+</view>

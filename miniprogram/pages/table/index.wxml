@@ -1,0 +1,70 @@
+<!--index.wxml-->
+<view class="container">
+    <view class="c-buttons">
+        <view wx:for="{{dButtons}}" class="c-b-node c-click" catchtap="{{item.ev}}"
+              data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+    </view>
+<!--    table-->
+    <view class="c-table">
+<!--        table search-->
+        <view class="c-t-search">
+            <view class="c-click" catchtap="{{dTable.search.stype.ev}}">{{dTable.search.stype.text}}</view>:
+            <input bindblur="{{dTable.search.ev}}" value="{{dTable.search.text}}"
+                   placeholder="search"/>
+        </view>
+<!--       table conter-->
+        <view class="c-t-conter" catchlongpress="showAddMenus">
+            <view class="c-heads">
+                <view class="c-head" wx:for="{{dTable.heads}}" style="{{item.style}}"
+                      catchtap="sortByNumb" data-event1-data1="{{item.text}}">{{item.text}}</view>
+            </view>
+            <view class="c-tr" wx:for="{{dTable.lineArr}}" wx:for-item="trdata" wx:for-index="i" catchlongpress="showLineMenus" data-event1-data1="{{i}}">
+                <view class="c-td" wx:for="{{dTable.heads}}" wx:for-item="head">
+                    <image wx:if="{{trdata.mediaInfo[head.text]!=null}}" src="{{trdata.mediaInfo[head.text].imgPath}}" mode="aspectFit"
+                           catchtap="{{trdata.mediaInfo[head.text].ev}}" data-event1-data1="{{trdata.mediaInfo[head.text].evData}}"
+                           catchlongpress="{{trdata.mediaInfo[head.text].ev2}}"  data-event2-data2="{{trdata.mediaInfo[head.text].evData2}}"
+                           style="height:6vw;max-width:6vw"></image>
+                    <view wx:else hidden="{{dTable.editInfo.index==i&&dTable.editInfo.isShow}}">{{trdata[head.text]}}</view>
+                    <input wx:if="{{trdata.inputInfo[head.text]!=null}}" value="{{trdata.inputInfo[head.text].text}}"
+                           catchinput="{{trdata.inputInfo[head.text].ev}}" data-event1-data1="{{trdata.inputInfo[head.text].evData}}"
+                           class="c-td-input" style="{{trdata.inputInfo[head.text].style}}"
+                           hidden="{{(dTable.editInfo.index==i&&dTable.editInfo.isShow)==false}}"/>
+                </view>
+            </view>
+        </view>
+<!--        table options-->
+        <view class="c-tr">
+            <view class="c-click c-td" wx:for="{{dTable.options}}" wx:for-item="item">
+                <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
+                       value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
+                <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+            </view>
+        </view>
+    </view>
+<!--    long add-->
+    <view hidden="{{dLongAdd.isShow==false}}" class="c-mask">
+        <view class="c-longadd">
+            <view class="c-l-tr" wx:for="{{dLongAdd.inputs}}">
+                <view class="c-l-td c-tip">{{item.tip}}:</view>
+                <input value="{{item.inputStr}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
+                       maxlength="99999" class="c-l-td c-l-input"/>
+            </view>
+            <view class="c-l-tr">
+                <view class="c-l-td" style="height:20px"></view>
+                <view class="c-l-td"></view>
+            </view>
+            <view class="c-l-tr">
+                <view class="c-l-td">
+                    <button catchtap="{{dLongAdd.cancel.ev}}" data-event1-data1="{{dLongAdd.cancel.evData}}"
+                            type="default" plain="true"
+                            class="c-l-button" style="float:left">{{dLongAdd.cancel.text}}</button>
+                </view>
+                <view class="c-l-td">
+                    <button catchtap="{{dLongAdd.ok.ev}}" data-event1-data1="{{dLongAdd.ok.evData}}"
+                            type="default" plain="true"
+                            class="c-l-button" style="float:right">{{dLongAdd.ok.text}}</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

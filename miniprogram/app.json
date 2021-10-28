@@ -1,0 +1,27 @@
+{
+  "pages": [
+    "pages/trend/index",
+
+    "pages/setting/index",
+    "pages/learn/index",
+    "pages/apple/index",
+    "pages/file/index",
+    "pages/table/index"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "zs": "-------------tts-------------",
+  "plugins": {
+    "WechatSI": {
+      "version": "0.0.7",
+      "provider": "wx069ba97219f66d99"
+    }
+  }
+}

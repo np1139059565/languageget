@@ -1,0 +1,40 @@
+<!--index.wxml-->
+<view class="container">
+    <view class="c-buttons">
+        <view wx:for="{{dButtons}}" class="c-b-node c-click" catchtap="{{item.ev}}"
+              data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+    </view>
+    <!--trend-->
+    <view class="c-trend" style="{{dTrend.style}}">
+<!--        button1-->
+        <view style="display: table;width:100%">
+            <view class="c-tr">
+                <view class="c-click c-td c-b-node" wx:for="{{dTrend.dButtons}}" wx:for-item="item">
+                    <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
+                           value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
+                    <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+                </view>
+            </view>
+        </view>
+
+<!--        conter-->
+        <view class="c-t-conter">
+            <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ dTrend.ec1 }}"></ec-canvas>
+        </view>
+<!--        button2-->
+        <view style="display: table;width:100%">
+            <view class="c-tr">
+                <view class="c-click c-td" wx:for="{{dTrend.dButtons2}}" wx:for-item="item">
+                    <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
+                           value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
+                    <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+                </view>
+            </view>
+        </view>
+
+    </view>
+    <view class="c-gold">
+        <image mode="aspectFit" style="width:6vh;height:6vh" src="/images/golds.svg"></image>
+        <text>{{dGolds.total}}</text>
+    </view>
+</view>

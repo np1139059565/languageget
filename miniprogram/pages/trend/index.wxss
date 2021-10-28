@@ -1,0 +1,34 @@
+/**index.wxss**/
+
+page {
+  background: #f6f6f6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.c-trend{
+  width: calc(100% - 2vw);
+  height: calc(100% - 6vw - 4vw);
+  padding: 1vw;
+}
+.c-t-conter{
+  height: calc(100% - 6vw - 6vw - 5vw);
+}
+
+.c-tr{
+  display: table-row;
+}
+.c-td{
+  display: table-cell;
+  padding-left: 2vw;
+  word-break: keep-all;
+  border-bottom: none;
+  float: none;
+}
+.c-gold{
+  position: absolute;
+  right: 0;
+  line-height: 6vh;
+  padding: 0 6vw;
+}

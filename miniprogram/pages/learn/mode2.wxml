@@ -1,0 +1,12 @@
+<!--index.wxml-->
+<template name="mode-02">
+    <view class="c-edits">
+        <view wx:for="{{mode2Edits}}" class="c-edit">
+            <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
+                   hold-keyboard="true"
+                   value="{{item.inputStr}}" cursor="2" style="{{item.style}}" class="c-e-input"/>
+            <!--nbsp等特殊字符只有text标签设置decode为true才能识别-->
+            <text wx:else decode="true">{{item.val == ' ' ? '&nbsp;&nbsp;&nbsp;' : item.val}}</text>
+        </view>
+    </view>
+</template>

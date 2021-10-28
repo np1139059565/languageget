@@ -1,0 +1,24 @@
+<!--index.wxml-->
+<view class="container">
+    <view class="c-table">
+        <view wx:for="{{trArr}}" wx:for-item="tr1" class="c-tr">
+            <view class="c-td c-tip">{{tr1.k}}</view>
+            <view wx:for="{{tr1.tdArr}}" wx:for-item="td1" class="c-td">
+<!--                picker-->
+                <picker wx:if="{{td1.type=='picker'}}" value="{{td1.pickerval}}" range="{{td1.rangeArr}}" bindchange="{{td1.ev}}"
+                        data-event1-data1="{{td1.evData}}">
+                    <view>{{td1.coverVal!=null?td1.coverVal:td1.rangeArr[td1.pickerval]}}</view>
+                </picker>
+<!--                button-->
+                <button wx:elif="{{td1.type=='button'}}" catchtap="{{td1.ev}}" data-event1-data1="{{td1.evData}}"
+                        type="default" size="mini" plain="true" class="c-l-button">
+                    {{td1.text}}
+                </button>
+<!--                input-->
+                <input wx:elif="{{td1.type=='input'}}" catchinput="{{td1.ev}}" data-event1-data1="{{td1.evData}}"
+                       value="{{td1.text}}" style="border-bottom:1px solid"/>
+                <view wx:else decode="true">{{td1.text}}</view>
+            </view>
+        </view>
+    </view>
+</view>

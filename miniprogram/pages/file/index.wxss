@@ -1,0 +1,16 @@
+/**index.wxss**/
+.c-absolute{
+    width: 100%;
+    overflow: auto;
+}
+.c-dirs{
+    width:100%;
+    height: calc(60% - 6vw);
+    overflow: auto;
+}
+
+.c-edit{
+    width:100%;
+    height: calc(40% - 6vw);
+    background: #CCC;
+}

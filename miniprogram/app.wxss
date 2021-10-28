@@ -1,0 +1,41 @@
+view{
+  font-size: 6vw;
+}
+
+/**app.wxss**/
+.container {
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 10px);
+  height: calc(100vh - 10px);
+  padding: 5px;
+}
+
+button {
+  background: initial;
+}
+
+button:focus{
+  outline: 0;
+}
+
+button::after{
+  border: none;
+}
+
+
+.c-buttons{
+  width: 100%;
+  min-height: 6vw;
+  float: left;
+}
+.c-b-node{
+  float: left;
+  height: 100%;
+  margin: 0 1vw;
+  border-bottom: 0.5vw solid;
+}
+
+.c-click{
+  color: -webkit-link;
+}

@@ -1,0 +1,25 @@
+<!--index.wxml-->
+<import src="mode1.wxml"></import>
+<import src="mode2.wxml"></import>
+<view class="container" style="{{errStyle}}">
+    <template is="{{dMode.name}}" data="{{...dMode}}"/>
+    <view class="c-answer" catchtap="{{dAnswer.ev}}" catchlongpress="{{dAnswer.ev2}}"
+          data-event1-data1="{{dAnswer.evData}}" data-event1-data2="{{dAnswer.evData2}}">
+        <view wx:if="{{dAnswer.text!=null&&dAnswer.text!='null'}}">{{dAnswer.text}}</view>
+
+        <image wx:if="{{dAnswer.imgPath!=null&&item.imgPath!=''}}" src="{{dAnswer.imgPath}}" mode="aspectFit"
+               style="height:calc(100% - 6vw);width:100%"></image>
+    </view>
+<!--    tools-->
+    <view class="c-buttons">
+        <view class="c-b-node c-click c-button" wx:for="{{dTools}}" wx:if="{{item.isShow}}"
+              catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}"
+              bindtouchstart="{{item.ev2}}" bindtouchcancel="{{item.ev3}}" bindtouchend="{{item.ev3}}">
+            <image wx:if="{{item.imgPath!=null&&item.imgPath!=''}}" src="{{item.imgPath}}" mode="aspectFit"
+                   style="height:100%;width:6vw"></image>
+            <view wx:else>{{item.text}}</view>
+        </view>
+    </view>
+<!--    mask-->
+    <view hidden="{{dMask.isShow==false}}" class="c-mask"></view>
+</view>

@@ -1,0 +1,26 @@
+/**index.wxss**/
+.container{
+    overflow: auto;
+}
+.c-table{
+    display: table;
+    height: 100%;
+}
+.c-tr{
+    display: table-row;
+}
+.c-td{
+    display: table-cell;
+    padding: 0 1vw;
+    text-align: left;
+    color: #555;
+}
+.c-tip{
+    width: 6vw;
+    height: 6vh;
+    text-align: right;
+    color: #000;
+}
+.c-td button{
+    color: #555;
+}

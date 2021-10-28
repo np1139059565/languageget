@@ -1,0 +1,73 @@
+/**index.wxss**/
+.c-answer{
+    height: calc(50% - 4vw);
+    text-align: center;
+}
+.c-options{
+    height: calc(50% - 4vw);
+}
+.c-option{
+    width: calc(50% - 5px);
+    height: calc(50% - 5px);
+    margin: 2.5px;
+    border-radius: 5px;
+    text-align: center;
+    float: left;
+    background: #CCC;
+    position: relative;
+}
+.c-buttons{
+    height: 6vw;
+    position: absolute;
+    bottom: 2vh;
+    display: table-row;
+}
+.c-button{
+    height: 6vw;
+    border: none;
+    /*float: none;*/
+    display: table-cell;
+    font-size: 6vw;
+    line-height: 6vw;
+    padding: 0 6vw;
+}
+.c-mask{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(255,255,255,0.3);
+}
+.c-option-mask{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.c-edit{
+    height: 12vw;
+    font-size: 12vw;
+    line-height: 12vw;
+    margin-bottom: 5px;
+    float: left;
+}
+.c-e-input{
+    height: 12vw;
+    font-size: 12vw;
+    border-bottom: 1px solid;
+    text-align: center;
+    width: 4vw;
+    padding: 0;
+    margin: 0;
+    margin-left: 1vw;
+}
+
+.c-mic{
+    width: 100%;
+    height: 6vh;
+    position: absolute;
+    bottom: 0;
+}

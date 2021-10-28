@@ -1,0 +1,11 @@
+<!--index.wxml-->
+<template name="mode-01">
+    <view class="c-options">
+        <view class="c-option" wx:for="{{mode1Options}}" catchtap="{{item.ev}}" catchlongpress="{{item.ev2}}"
+              data-event1-data1="{{item.evData}}" data-event1-data2="{{item.evData2}}">
+            <image wx:if="{{item.imgPath!=null&&item.imgPath!=''}}" src="{{item.imgPath}}" mode="aspectFit" style="height:100%;max-width:100%"></image>
+            <view wx:else >{{item.text}}</view>
+            <image class="c-option-mask" hidden="{{item.maskPath==null||item.maskPath==''}}" src="{{item.maskPath}}" mode="aspectFit"></image>
+        </view>
+    </view>
+</template>

@@ -1,0 +1,34 @@
+/**index.wxss**/
+.c-drops{
+    width:100vw;
+    height: 52vh;
+    position: relative;
+}
+.c-apple{
+    width: 18vw;
+    height:18vw;
+    right:0vw;
+    bottom:0vw;
+    position: absolute;
+    background: #FFF;
+}
+.c-apple-text{
+    position: absolute;
+    font-size: 6vw;
+    word-break: break-word;
+    top: 0;
+    z-index: 999;
+}
+.c-apple-img{
+    width:100%;
+    height:calc(100% - 6vw);
+    position: absolute;
+    bottom: 0;
+    opacity: 0.5;
+}
+.c-input{
+    width: 100%;
+    height: 12vw;
+    font-size: 12vw;
+    border-bottom: 1px solid;
+}

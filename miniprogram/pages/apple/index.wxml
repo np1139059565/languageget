@@ -1,0 +1,12 @@
+<!--index.wxml-->
+<view class="container">
+    <view class="c-drops">
+        <view class="c-apple" wx:for="{{dropInfo.appleArr}}" style="right:{{item.right}}vw;bottom:{{item.bottom}}vh">
+            <view class="c-apple-text">{{item.text}}</view>
+            <image class="c-apple-img" src="{{item.imgPath}}" mode="aspectFit"></image>
+        </view>
+    </view>
+    <input catchinput="{{dInputInfo.ev}}" data-event1-data1="{{dInputInfo.evData}}" hold-keyboard="true"
+           confirm-hold="true" focus="true"
+           value="{{dInputInfo.inputStr}}" cursor="2" style="{{dInputInfo.style}}" class="c-input"/>
+</view>

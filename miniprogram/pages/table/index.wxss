@@ -1,0 +1,82 @@
+/**index.wxss**/
+
+page {
+  background: #f6f6f6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+
+.c-table{
+  width: calc(100% - 2vw);
+  height: calc(100% - 6vw - 4vw);
+  padding: 1vw;
+}
+.c-t-search{
+  display: flex;
+  text-align: center;
+}
+
+.c-t-search>input{
+  border-bottom: 0.5vw solid;
+}
+.c-t-conter{
+  width: 100%;
+  height: 82vh;
+  overflow: auto;
+  margin-top: 2vw;
+}
+.c-heads,.c-tr{
+  display: table-row;
+}
+.c-tr:nth-of-type(even){
+  background: #CCC;
+}
+.c-head{
+  font-size: 7vw;
+}
+.c-head,.c-td{
+  display: table-cell;
+  padding-left: 2vw;
+  border-bottom: 1px solid;
+  word-break: keep-all;
+}
+.c-td-input{
+  border-bottom: 1px solid;
+}
+
+.c-mask{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,0.5);
+}
+.c-longadd{
+  width: 70vw;
+  height: 20vh;
+  margin: 12vh 10vw;
+  padding: 5vw;
+  border-radius: 10px;
+  background: #FFF;
+  display: table;
+}
+.c-l-tr{
+  display: table-row;
+  position: relative;
+}
+.c-l-td{
+  display: table-cell;
+}
+.c-tip{
+  width:20px;
+  text-align: right;
+}
+.c-l-input{
+  border-bottom: 1px solid;
+}
+.c-l-button{
+  width: 30vw!important;
+}
