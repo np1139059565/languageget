@@ -6,6 +6,10 @@ var VOICE_TYPE_ARR = ["zhvoice", "envoice"]
 var SORT_TYPE_ARR = ["e", "c", "updatetime"]
 Page({
     data: {
+        dProgress:{
+            isShow:false,
+            pro:0,
+        },
         dButtons: {
             loopPlay: {
                 text: "loopPlay",
@@ -95,6 +99,23 @@ Page({
             this.setData(this.data)
             this.tableUpdata()
         } catch (e) {
+            app.data.mlog.err(e)
+        }
+    },
+    uploadProgress:function (total,p){
+        try{
+            //up pro
+            this.data.dProgress.pro=(p/total*100)
+            //>0 show
+            if(this.data.dProgress.pro>0){
+                this.data.dProgress.isShow=true
+                //>100 hide
+                if(this.data.dProgress.pro>=100){
+                    this.data.dProgress.isShow=false
+                }
+            }
+            this.setData(this.data)
+        }catch (e){
             app.data.mlog.err(e)
         }
     },
@@ -290,7 +311,10 @@ Page({
                                 this.removeLineBySKEY(skey, true)
                                 this.tableUpdata()
                             } else {
-                                this.data.dTable.lineArr.map(info1 => this.removeLineBySKEY(info1[SETTINGS.learnkey]), true)
+                                this.data.dTable.lineArr.map((info1,i) => {
+                                    this.uploadProgress(this.data.dTable.lineArr.length,i)
+                                    this.removeLineBySKEY(info1[SETTINGS.learnkey], true)
+                                })
                                 this.tableUpdata()
                             }
                         })

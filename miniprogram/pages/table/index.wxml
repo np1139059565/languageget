@@ -1,5 +1,8 @@
 <!--index.wxml-->
 <view class="container">
+    <view class="c-progress" wx:if="{{dProgress.isShow}}">
+        <progress percent="{{dProgress.pro}}" stroke-width="2"/>
+    </view>
     <view class="c-buttons">
         <view wx:for="{{dButtons}}" class="c-b-node c-click" catchtap="{{item.ev}}"
               data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
