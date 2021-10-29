@@ -680,7 +680,7 @@ Page({
                                                 title: 'copy...',
                                                 mask: true//防止触摸
                                             })
-                                            const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath)
+                                            const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath,this.uploadProgress)
                                             wx.hideLoading()
                                             if (ccode) {
                                                 app.showModal("upload subject " + app.data.mfile.readFile(dbPath + subjectId + "/subject")

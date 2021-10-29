@@ -195,7 +195,7 @@ function copyFile(srcFPath, dstFPath) {
  * @param srcPath wxfile://usr/tmp/dgg3efh573hj73js5sc5/
  * @param dstPath wxfile://usr/languageget/
  */
-function copyDir(srcPath, dstPath) {
+function copyDir(srcPath, dstPath,upProgressEvent) {
     const loopCopy = (srcPath1, dstPath1) => {
         // check dst path
         if (!dstPath1.endsWith("/")) {
@@ -208,7 +208,13 @@ function copyDir(srcPath, dstPath) {
             }
             const pName = srcPath1.split("/").reverse()[1]
             const cNameArr = readDir(srcPath1)
-            return cNameArr.map(cname => loopCopy(srcPath1 + cname, dstPath1 + pName)).filter(r => r).length == cNameArr.length
+            return cNameArr.map((cname,i) =>{
+                //up progress
+                if(typeof upProgressEvent=="function"){
+                    upProgressEvent(cNameArr.length,i)
+                }
+                loopCopy(srcPath1 + cname, dstPath1 + pName)
+            }).filter(r => r).length == cNameArr.length
         } else if (isExist(srcPath1)) {
             return copyFile(srcPath1, dstPath1 + srcPath1.split("/").reverse()[0])
         } else {
