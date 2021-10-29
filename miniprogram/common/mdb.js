@@ -648,7 +648,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
             })
         }
         const dbPath = getDBPath()
-        const upFailArr={}
+        const upFailArr=[]
         var isUpload = false
         var uploadCount = 0
         mediaPathArr.map(mediaPath=> {
