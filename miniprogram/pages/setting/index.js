@@ -680,12 +680,16 @@ Page({
                                                 title: 'copy...',
                                                 mask: true//防止触摸
                                             })
+                                            //copy file
                                             const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath,this.uploadProgress)
+                                            //end hide loading,progress
                                             wx.hideLoading()
+                                            this.uploadProgress(100,100)
                                             app.showModal("copy " + subjectName
                                                 + " is " + ccode)
+                                            //clean tmp
+                                            app.data.mfile.rmPath(tmpPath)
                                             if (ccode) {
-                                                app.data.mfile.rmPath(tmpPath)
                                                 app.data.mdb.switchSubjectSync(() => {
                                                     this.onLoad()
                                                 }, false, true, subjectId)
