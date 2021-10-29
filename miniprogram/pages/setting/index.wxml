@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <view class="container">
-    <view class="c-progress" wx:if="{{dProgress.isSHow}}">
+    <view class="c-progress" wx:if="{{dProgress.isShow}}">
         <progress progress percent="{{dProgress.pro}}" stroke-width="2"/>
     </view>
     <view class="c-scroll">
