@@ -660,7 +660,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
                         if(upFailArr.length==0){
                             mcallback(true)
                         }else{
-                            app.showModal("re upload?"+upFailArr.join(","),()=>{
+                            _SHOWMODAL("re upload?"+upFailArr.join(","),()=>{
                                 uploadLocalMediaToYunSync(upFailArr,callback,isShowLoading)
                             },()=>{
                                 mcallback(false)
