@@ -138,7 +138,7 @@ App({
                             }
                         } else {
                             if (typeof cancelcallback == "function") {
-                                this.data.mlog.info("not selected.")
+                                // this.data.mlog.info("not selected.")
                                 cancelcallback()
                             }else{
                                 this.data.mlog.err("not selected.")
