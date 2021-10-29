@@ -682,9 +682,9 @@ Page({
                                             })
                                             const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath,this.uploadProgress)
                                             wx.hideLoading()
+                                            app.showModal("upload subject " + app.data.mfile.readFile(dbPath + subjectId + "/subject")
+                                                + " is " + ccode)
                                             if (ccode) {
-                                                app.showModal("upload subject " + app.data.mfile.readFile(dbPath + subjectId + "/subject")
-                                                    + " is " + ccode)
                                                 app.data.mfile.rmPath(tmpPath)
                                                 app.data.mdb.switchSubjectSync(() => {
                                                     this.onLoad()
