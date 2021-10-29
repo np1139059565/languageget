@@ -3,14 +3,18 @@ const app = getApp()
 var SETTINGS = null
 Page({
     data: {
-        trArr: [
+        dProgress:{
+            isShow:false,
+            pro:0,
+        },
+        dTrArr: [
             // {k,tdArr:[{type,pickerval,rangeArr,ev,evData,coverVal,pickerval,text}]}
         ]
     },
     onLoad: function () {
         try {
             //init default button
-            this.data.trArr = [
+            this.data.dTrArr = [
                 {
                     k: "to page",
                     tdArr: [
@@ -49,7 +53,7 @@ Page({
             ]
             const dbPath = app.data.mdb.getDBPath()
             //get subject arr
-            app.data.mfile.readDir(dbPath).map(subjectId => this.data.trArr.push({
+            app.data.mfile.readDir(dbPath).map(subjectId => this.data.dTrArr.push({
                 k: "",
                 tdArr: [{
                     type: "button",
@@ -62,6 +66,24 @@ Page({
             this.switchSubjectSync1(true)
         } catch (e1) {
             app.data.mlog.err(e1)
+        }
+    },
+
+    uploadProgress:function (total,p){
+        try{
+            //up pro
+            this.data.dProgress.pro=(p/total)
+            //>0 show
+            if(this.data.dProgress.pro>0){
+                this.data.dProgress.isShow=true
+                //>100 hide
+                if(this.data.dProgress.pro>=100){
+                    this.data.dProgress.isShow=false
+                }
+            }
+            this.setData(this.data)
+        }catch (e){
+            app.data.mlog.err(e)
         }
     },
     openPage: function (e) {
@@ -95,7 +117,7 @@ Page({
         try {
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
-                    this.data.trArr[0].tdArr.filter(td => td.text == "table")[0].type = "button"//open table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.text == "table")[0].type = "button"//open table button
                     //refush title
                     wx.setNavigationBarTitle({
                         title: app.data.mdb.query1({field: {subject: true}}).subject
@@ -113,7 +135,7 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 } else if (app.data.mdb.getSubjectId() == null) {
-                    this.data.trArr[0].tdArr.filter(td => td.text == "table")[0].type = ""//close table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.text == "table")[0].type = ""//close table button
                     wx.setNavigationBarTitle({
                         title: "settings"
                     })
@@ -136,7 +158,7 @@ Page({
             const pickerInfo = {
                 type: "picker",
                 ev: "changePicker",
-                evData: this.data.trArr.length,
+                evData: this.data.dTrArr.length,
                 rangeArr: SETTINGS.heads
             }
             if (SETTINGS.heads.indexOf(settingv) < 0 && (settingv >= 0 || settingv < 0)) {
@@ -150,21 +172,21 @@ Page({
                 pickerInfo.type = ""
                 pickerInfo.ev = ""
             }
-            this.data.trArr.push({
+            this.data.dTrArr.push({
                 k: settingk,
                 tdArr: [pickerInfo]
             })
         } else if (settingv instanceof Array) {
             if (settingv.filter(v => typeof v == "string" || v >= 0 || v < 0).length == settingv.length) {
                 //arr to picker
-                this.data.trArr.push({
+                this.data.dTrArr.push({
                     k: settingk,
                     tdArr: settingv.map((v1, j) => {
                         const pickerInfo = {
                             // pickerval:SETTINGS.heads.indexOf(v1),
                             type: "picker",
                             ev: "changePickerArr1",
-                            evData: settingk+";"+this.data.trArr.length + ";" + j,
+                            evData: settingk+";"+this.data.dTrArr.length + ";" + j,
                             rangeArr: SETTINGS.heads
                         }
                         if (SETTINGS.heads.indexOf(v1) < 0) {
@@ -187,7 +209,7 @@ Page({
     getTrInfoByHeadArr(headArr) {
         try {
             headArr.map((h, dataIndex) => {
-                const trIndex = this.data.trArr.length
+                const trIndex = this.data.dTrArr.length
                 const trInfo={
                     k:dataIndex>0?dataIndex:"heads",
                     tdArr: [
@@ -224,23 +246,23 @@ Page({
                     trInfo.tdArr[2].type=""
                     trInfo.tdArr[2].text=""
                 }
-                this.data.trArr.push(trInfo)
+                this.data.dTrArr.push(trInfo)
             })
             //add new head button
-            this.data.trArr.push({
+            this.data.dTrArr.push({
                 k:"add head",
                 tdArr: [
                     {
                         type: "input",
                         text: "",
                         ev: "changeInputStr",
-                        evData: "heads;" + this.data.trArr.length + ";0"
+                        evData: "heads;" + this.data.dTrArr.length + ";0"
                     },
                     {
                         type: "button",
                         text: "+",
                         ev: "addHead",
-                        evData: "heads;" + this.data.trArr.length + ";0"
+                        evData: "heads;" + this.data.dTrArr.length + ";0"
                     }
                 ]
             })
@@ -259,7 +281,7 @@ Page({
                             type: "picker",
                             pickerval: SETTINGS.heads.indexOf(h),
                             ev: "changePickerArr2",
-                            evData: "fzkts" + ";" + this.data.trArr.length + ";" + tdIndex,
+                            evData: "fzkts" + ";" + this.data.dTrArr.length + ";" + tdIndex,
                             rangeArr: SETTINGS.heads
                         }
                         //找不到对应的val只显示
@@ -273,10 +295,10 @@ Page({
                                 type: "button",
                                 text: h,
                                 ev: "upArrIndex",
-                                evData: "fzkts;" + this.data.trArr.length + ";" + dataIndex
+                                evData: "fzkts;" + this.data.dTrArr.length + ";" + dataIndex
                             }
                             if (h == "↑") {
-                                pickerInfo.evData = ("fzkts;" + this.data.trArr.length + ";" + (dataIndex - 1))
+                                pickerInfo.evData = ("fzkts;" + this.data.dTrArr.length + ";" + (dataIndex - 1))
                             }
                             if (h == "x") {
                                 pickerInfo.ev = "removeArrNodeByIndex"
@@ -293,11 +315,11 @@ Page({
                     trInfo.tdArr[trInfo.tdArr.length - 2].type=""
                     trInfo.tdArr[trInfo.tdArr.length - 2].text=""
                 }
-                this.data.trArr.push(trInfo)
+                this.data.dTrArr.push(trInfo)
 
             })
             //add new fzk button
-            this.data.trArr.push({
+            this.data.dTrArr.push({
                 k:"add fzk",
                 tdArr: [
                     {
@@ -314,7 +336,7 @@ Page({
     getTrInfoByByINPUTS(inputArr) {
         try {
             inputArr.map((h, dataIndex) => {
-                const trIndex = this.data.trArr.length
+                const trIndex = this.data.dTrArr.length
                 const trInfo={
                     k:dataIndex>0?dataIndex:"inputs",
                     tdArr: [
@@ -351,17 +373,17 @@ Page({
                     trInfo.tdArr[2].type=""
                     trInfo.tdArr[2].text=""
                 }
-                this.data.trArr.push(trInfo)
+                this.data.dTrArr.push(trInfo)
             })
 
-            this.data.trArr.push({
+            this.data.dTrArr.push({
                 k:"add input",
                 tdArr: [{
                 pickerval: 0,
                 type: "picker",
                 coverVal: "+",
                 ev: "addInputHead",
-                evData: this.data.trArr.length,
+                evData: this.data.dTrArr.length,
                 rangeArr: SETTINGS.heads
             }]})
         } catch (e) {
@@ -373,7 +395,7 @@ Page({
             const tmp = e.currentTarget.dataset.event1Data1.split(";")
             const trIndex = parseInt(tmp[1])
             const tdIndex = parseInt(tmp[2])
-            this.data.trArr[trIndex].tdArr[tdIndex].text = e.detail.value
+            this.data.dTrArr[trIndex].tdArr[tdIndex].text = e.detail.value
             this.setData(this.data)
         } catch (e1) {
             app.data.mlog.err(e1)
@@ -382,7 +404,7 @@ Page({
     addHead: function (e) {
         try {
             const trIndex = e.currentTarget.dataset.event1Data1.split(";")[1]
-            const newHead = this.data.trArr[trIndex].tdArr[0].text.trim()
+            const newHead = this.data.dTrArr[trIndex].tdArr[0].text.trim()
             if (SETTINGS.heads.indexOf(newHead) >= 0) {
                 app.showModal("head is cover!")
             } else if (newHead.length > 0) {
@@ -423,7 +445,7 @@ Page({
         try {
             const trIndex = e.currentTarget.dataset.event1Data1
             const sindex = e.detail.value
-            const newInputStr = this.data.trArr[trIndex].tdArr[this.data.trArr[trIndex].tdArr.length - 1].rangeArr[sindex]
+            const newInputStr = this.data.dTrArr[trIndex].tdArr[this.data.dTrArr[trIndex].tdArr.length - 1].rangeArr[sindex]
             if (SETTINGS.inputs.indexOf(newInputStr) < 0) {
                 app.showModal("add " + newInputStr + "?", () => {
                     //save to local
@@ -480,16 +502,16 @@ Page({
                 }
             })
             SETTINGS = app.data.mdb.query1({field: {settings: true}}).settings
-            const firstIndex=this.data.trArr.findIndex(trInfo=>trInfo.k==settingk)
+            const firstIndex=this.data.dTrArr.findIndex(trInfo=>trInfo.k==settingk)
             if(settingk=="heads"){
-                this.data.trArr.splice(firstIndex,SETTINGS.heads.length+1)
+                this.data.dTrArr.splice(firstIndex,SETTINGS.heads.length+1)
                 this.getTrInfoByHeadArr(SETTINGS.heads)
             }else if(settingk=="fzkts"){
-                this.data.trArr.splice(firstIndex,SETTINGS.fzkts.length)
+                this.data.dTrArr.splice(firstIndex,SETTINGS.fzkts.length)
                 this.getTrInfoByFZKTS(SETTINGS.fzkts)
             }
             else if(settingk=="inputs"){
-                this.data.trArr.splice(firstIndex,SETTINGS.inputs.length+1)
+                this.data.dTrArr.splice(firstIndex,SETTINGS.inputs.length+1)
                 this.getTrInfoByByINPUTS(SETTINGS.inputs)
             }
             this.setData(this.data)
@@ -501,10 +523,10 @@ Page({
         try {
             const trIndex = e.currentTarget.dataset.event1Data1
             const sindex = e.detail.value
-            const pickerInfo = this.data.trArr[trIndex].tdArr[0]
+            const pickerInfo = this.data.dTrArr[trIndex].tdArr[0]
             if (sindex != pickerInfo.pickerval) {
                 //save to local
-                app.data.mdb.update1({settings: {[this.data.trArr[trIndex].k]: this.data.trArr[trIndex].tdArr[0].rangeArr[sindex]}})
+                app.data.mdb.update1({settings: {[this.data.dTrArr[trIndex].k]: this.data.dTrArr[trIndex].tdArr[0].rangeArr[sindex]}})
                 //change view data
                 pickerInfo.pickerval = sindex
                 this.setData(this.data)
@@ -520,8 +542,8 @@ Page({
             const trIndex = tmp[1]
             const tdIndex = tmp[2]
             const sindex = e.detail.value
-            const pickerInfo = this.data.trArr[trIndex].tdArr[tdIndex]
-            const rangeArr = this.data.trArr[trIndex].tdArr[tdIndex].rangeArr
+            const pickerInfo = this.data.dTrArr[trIndex].tdArr[tdIndex]
+            const rangeArr = this.data.dTrArr[trIndex].tdArr[tdIndex].rangeArr
             if (sindex != pickerInfo.pickerval) {
                 //save to local
                 const updateGeo = {
@@ -534,7 +556,7 @@ Page({
                 }
                 app.data.mdb.update1(updateGeo)
                 //change view data
-                this.data.trArr[trIndex].tdArr[tdIndex].pickerval = sindex
+                this.data.dTrArr[trIndex].tdArr[tdIndex].pickerval = sindex
                 this.setData(this.data)
             }
         } catch (e1) {
@@ -549,10 +571,10 @@ Page({
             const trIndex = parseInt(tmp[1])
             const tdIndex = parseInt(tmp[2])
 
-            const trInfo = this.data.trArr[trIndex]
+            const trInfo = this.data.dTrArr[trIndex]
             const toIndex = trInfo.k != settingk ? parseInt(trInfo.k) : 0
             const pickerInfo = trInfo.tdArr[tdIndex]
-            const rangeArr = this.data.trArr[trIndex].tdArr[tdIndex].rangeArr
+            const rangeArr = this.data.dTrArr[trIndex].tdArr[tdIndex].rangeArr
             if (sindex != pickerInfo.pickerval) {
                 //save to local
                 const updateGeo = {
@@ -565,7 +587,7 @@ Page({
                 }
                 app.data.mdb.update1(updateGeo)
                 //change view data
-                this.data.trArr[trIndex].tdArr[tdIndex].pickerval = sindex
+                this.data.dTrArr[trIndex].tdArr[tdIndex].pickerval = sindex
                 this.setData(this.data)
             }
         } catch (e1) {
@@ -585,10 +607,16 @@ Page({
                         if (app.data.mfile.isExist(tmpPath)) {
                             app.data.mfile.rmPath(tmpPath)
                         }
+                        //show progress
+                        this.data.dProgress.isShow=true
+                        this.setData(this.data)
                         //package media
                         const dbPath=app.data.mdb.getDBPath()
                         this.packMZIPSync(dbPath + subjectId, tmpPath, (code) => {
                             try {
+                                //hide progress
+                                this.data.dProgress.isShow=false
+                                this.setData(this.data)
                                 if (code) {
                                     wx.openDocument({
                                         filePath: tmpPath+mzipName,
@@ -765,7 +793,9 @@ Page({
                 const FInfo = app.data.mfile.getFInfo(path)
                 if (FInfo!=null) {
                     if (FInfo.isDirectory()) {
-                        app.data.mfile.readDir(path).map(childName => {
+                        const nodeArr=app.data.mfile.readDir(path)
+                        nodeArr.map((childName,i) => {
+                            this.uploadProgress(nodeArr.length,i)
                             const cpath = path + childName
                             const CFInfo=app.data.mfile.getFInfo(cpath)
                             if(CFInfo!=null){
