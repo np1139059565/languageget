@@ -700,6 +700,7 @@ module.exports.UPDATE_TYPES = UPDATE_TYPES
 module.exports.update1 = updateLocalData
 module.exports.uploadLocalSubjectToYunSync = uploadLocalSubjectToYunSync
 
+module.exports.getDBPath = getDBPath
 module.exports.getSubjectId = getSubjectId
 module.exports.getSubjectPath = getSubjectPath
 module.exports.getMediaPathByMType = getMediaPathByMType

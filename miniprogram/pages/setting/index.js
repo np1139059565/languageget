@@ -1,7 +1,6 @@
 //index.js
 const app = getApp()
 var SETTINGS = null
-var DB_PATH = null
 Page({
     data: {
         trArr: [
@@ -48,14 +47,13 @@ Page({
                     ]
                 }
             ]
-            //check local subject arr is null
-            DB_PATH = app.data.mdb.getSubjectPath().split("/").reverse().splice(2).reverse().join("/") + "/"
-            //init subject arr
-            app.data.mfile.readDir(DB_PATH).map(subjectId => this.data.trArr.push({
+            const dbPath = app.data.mdb.getDBPath()
+            //get subject arr
+            app.data.mfile.readDir(dbPath).map(subjectId => this.data.trArr.push({
                 k: "",
                 tdArr: [{
                     type: "button",
-                    text: app.data.mfile.readFile(DB_PATH + subjectId + "/subject"),
+                    text: app.data.mfile.readFile(dbPath + subjectId + "/subject"),//subject name
                     ev: "showSubjectMenu",
                     evData: subjectId
                 }]
@@ -576,17 +574,20 @@ Page({
     },
     downLocalSubject: function (subjectId) {
         try {
-            // const subjectId=app.data.mdb.getSubjectId()
+            // check is this subject
             if (subjectId ==app.data.mdb.getSubjectId()) {
-                app.showModal("dowmload " + app.data.mdb.query1({field: {subject: true}}).subject + "?", () => {
+                const subjectName=app.data.mdb.query1({field: {subject: true}}).subject
+                app.showModal("dowmload " + subjectName+ "?", () => {
                     const tmpPath = app.data.mfile.getUserDir() + "tmp/"
                     const mzipName=subjectId + ".mzip"
                     try {
-                        //check is not find
+                        //clean tmp path
                         if (app.data.mfile.isExist(tmpPath)) {
                             app.data.mfile.rmPath(tmpPath)
                         }
-                        this.packMZIPSync(DB_PATH + subjectId, tmpPath, (code) => {
+                        //package media
+                        const dbPath=app.data.mdb.getDBPath()
+                        this.packMZIPSync(dbPath + subjectId, tmpPath, (code) => {
                             try {
                                 if (code) {
                                     wx.openDocument({
@@ -641,6 +642,7 @@ Page({
                         this.unmzipSync(filePath, tmpPath, (code) => {
                             try {
                                 if (code) {
+                                    const dbPath=app.data.mdb.getDBPath()
                                     const subjectId = app.data.mfile.readDir(tmpPath)[0]
                                     const idPath = tmpPath + subjectId + "/_id"
                                     //check id
@@ -650,10 +652,10 @@ Page({
                                                 title: 'copy...',
                                                 mask: true//防止触摸
                                             })
-                                            const ccode=app.data.mfile.copyDir(tmpPath+subjectId,DB_PATH)
+                                            const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath)
                                             wx.hideLoading()
                                             if (ccode) {
-                                                app.showModal("upload subject " + app.data.mfile.readFile(DB_PATH + subjectId + "/subject")
+                                                app.showModal("upload subject " + app.data.mfile.readFile(dbPath + subjectId + "/subject")
                                                     + " is " + ccode)
                                                 app.data.mfile.rmPath(tmpPath)
                                                 app.data.mdb.switchSubjectSync(() => {
@@ -662,9 +664,9 @@ Page({
                                             }
                                         }
                                         //check is repeated
-                                        if (app.data.mfile.isExist(DB_PATH + subjectId)) {
+                                        if (app.data.mfile.isExist(dbPath + subjectId)) {
                                             app.showModal("subject is repeated, do you cover it?", ()=>{
-                                                app.data.mfile.rmPath(DB_PATH + subjectId)
+                                                app.data.mfile.rmPath(dbPath + subjectId)
                                                 saveSubject()
                                             }, () => {
                                                 app.data.mfile.rmPath(tmpPath)
@@ -702,7 +704,7 @@ Page({
             // const subjectId = e.currentTarget.dataset.event1Data1
             app.showModal("remove " + subjectId + "?", () => {
                 try {
-                    if (app.data.mfile.rmPath(DB_PATH + subjectId)) {
+                    if (app.data.mfile.rmPath(app.data.mdb.getDBPath() + subjectId)) {
                         app.data.mdb.switchSubjectSync(this.onLoad, false, true)
                     }
                 } catch (e2) {
