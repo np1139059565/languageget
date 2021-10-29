@@ -675,14 +675,14 @@ Page({
                                     const idPath = tmpPath + subjectId + "/_id"
                                     //check id
                                     if (app.data.mfile.isExist(idPath)&&JSON.parse(app.data.mfile.readFile(idPath))==subjectId) {
-                                        const saveSubject = () => {
+                                        const copySubject = (subjectName) => {
                                             wx.showLoading({
                                                 title: 'copy...',
                                                 mask: true//防止触摸
                                             })
                                             const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath,this.uploadProgress)
                                             wx.hideLoading()
-                                            app.showModal("upload subject " + app.data.mfile.readFile(dbPath + subjectId + "/subject")
+                                            app.showModal("copy " + subjectName
                                                 + " is " + ccode)
                                             if (ccode) {
                                                 app.data.mfile.rmPath(tmpPath)
@@ -692,15 +692,16 @@ Page({
                                             }
                                         }
                                         //check is repeated
+                                        const subjectName=app.data.mfile.readFile(tmpPath+subjectId + "/subject")
                                         if (app.data.mfile.isExist(dbPath + subjectId)) {
                                             app.showModal("subject is repeated, do you cover it?", ()=>{
                                                 app.data.mfile.rmPath(dbPath + subjectId)
-                                                saveSubject()
+                                                copySubject(subjectName)
                                             }, () => {
                                                 app.data.mfile.rmPath(tmpPath)
                                             })
                                         } else {
-                                            saveSubject()
+                                            copySubject(subjectName)
                                         }
                                     } else {
                                         app.data.mfile.rmPath(tmpPath)
