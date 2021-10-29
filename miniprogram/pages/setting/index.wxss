@@ -2,9 +2,17 @@
 .container{
     overflow: auto;
 }
+.c-progress{
+    width: 100%;
+    height: 1vh;
+}
+.c-scroll{
+    width: 100%;
+    height: 99vh;
+    overflow: auto;
+}
 .c-table{
     display: table;
-    height: 100%;
 }
 .c-tr{
     display: table-row;
