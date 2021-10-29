@@ -519,7 +519,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
         //create subject
         if (isShowLoading) {
             wx.showLoading({
-                title: 'create subject...',
+                title: 'checkSubject...',
                 mask: true//防止触摸
             })
         }
@@ -569,7 +569,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
         if (isShowLoading) {
             wx.hideLoading()
             wx.showLoading({
-                title: 'save subject to yun...',
+                title: 'upSubject...',
                 mask: true//防止触摸
             })
         }
@@ -582,16 +582,22 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
                     if (isShowLoading) {
                         wx.hideLoading()
                         wx.showLoading({
-                            title: 'del yun media...',
+                            title: 'delYMedia...',
                             mask: true//防止触摸
                         })
                     }
                     MY_YUN.yunSync("deldir", {dirName: subjectid},
                         (code2) => {
-                            wx.hideLoading()
                             info("del yun meida is",code2)
                             if (code2) {
                                 //find all media path
+                                if (isShowLoading) {
+                                    wx.hideLoading()
+                                    wx.showLoading({
+                                        title: 'findMedia...',
+                                        mask: true//防止触摸
+                                    })
+                                }
                                 const mediaPathArr=[]
                                 Object.keys(newSubjectObj.infos).map(skcode => {
                                     const infoData=newSubjectObj.infos[skcode]
@@ -637,7 +643,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'upload media to yun...',
+                title: 'upMedia...',
                 mask: true//防止触摸
             })
         }
