@@ -831,7 +831,10 @@ Page({
                 title: 'unmzip...',
                 mask: true//防止触摸
             })
-            app.data.mfile.readFile(mzipPath).split("\r\n").map(lineConter => {
+            const lineArr=app.data.mfile.readFile(mzipPath).split("\r\n")
+            lineArr.map((lineConter,i) => {
+                this.uploadProgress(lineArr.length,i)
+                //check conter is not null
                 if (lineConter != "") {
                     const tmp = lineConter.split(":")
                     const linePath = app.deUnicode(tmp[0], " ")
