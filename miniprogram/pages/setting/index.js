@@ -72,7 +72,7 @@ Page({
     uploadProgress:function (total,p){
         try{
             //up pro
-            this.data.dProgress.pro=(p/total)
+            this.data.dProgress.pro=(p/total*100)
             //>0 show
             if(this.data.dProgress.pro>0){
                 this.data.dProgress.isShow=true
