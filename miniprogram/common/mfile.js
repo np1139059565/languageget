@@ -341,6 +341,7 @@ module.exports.init1 = (log1) => {
 
 }
 module.exports.getUserDir = () => {
+    //wxfile://usr/
     return USER_DIR + "/"
 }
 module.exports.mkDir = mkDir

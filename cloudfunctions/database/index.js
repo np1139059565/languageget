@@ -12,7 +12,9 @@ cloud.init({
  * @returns {*}
  */
 async function myUpdate(event) {
+  //remove subject
   await cloud.database().collection(event.dbName).where(event.geo.where).remove()
+  //add subject
   return await cloud.database().collection(event.dbName).add({data:event.newSubject})
 }
 

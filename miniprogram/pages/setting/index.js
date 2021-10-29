@@ -717,12 +717,11 @@ Page({
     uploadSubjectToYun: function (subjectId) {
         try {
             app.showModal("upload subject to yun?", () => {
-                app.data.mdb.uploadLocalSubjectToYun(subjectId, (code) => {
-                    app.showModal("upload subject to yun is " + code)
+                app.data.mdb.uploadLocalSubjectToYunSync(subjectId, (code) => {
+                    app.showModal("upload local subject to yun is " + code)
                 }, true)
             }, () => {
             })
-
         } catch (e) {
             app.data.mlog.err(e)
         }

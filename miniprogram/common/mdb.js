@@ -6,8 +6,8 @@ const UPDATE_TYPES = {
     TOK: "_TO_"//获取指定元素
 }
 
-var localSubjectIdArr=[],log = null, dbName = null,  subjectId = null, _SHOWMODAL = null, _SHOWACTIONSHEET = null,
-    LOCAL_CACHE = {}, MY_YUN = null, MY_FILE = null
+var localSubjectIdArr = [], log = null, THIS_DB_NAME = null, THIS_SUBJECT_ID = null, THIS_SUBJECT_CACHE = {},
+    _SHOWMODAL = null, _SHOWACTIONSHEET = null, MY_YUN = null, MY_FILE = null
 
 
 function info(inf1, inf2, inf3) {
@@ -37,8 +37,8 @@ function initDB(dbName1, log1, yun1, file1, showModal1, showActionSheet1) {
         }
         info("init mdb...")
         if (dbName1 != null) {
-            dbName = dbName1
-            info("switch dbName is", dbName)
+            THIS_DB_NAME = dbName1
+            info("switch dbName is", THIS_DB_NAME)
         }
         if (yun1 != null) {
             MY_YUN = yun1
@@ -66,7 +66,7 @@ function initDB(dbName1, log1, yun1, file1, showModal1, showActionSheet1) {
  */
 function queryYunDataSync(geo, callback, isShowLoading, isQueryAllSubject) {
     try {
-        if (dbName == null || MY_YUN == null || (subjectId == null && false == isQueryAllSubject)) {
+        if (THIS_DB_NAME == null || MY_YUN == null || (THIS_SUBJECT_ID == null && false == isQueryAllSubject)) {
             err("db is not init.")
         } else {
             //init geo
@@ -74,15 +74,15 @@ function queryYunDataSync(geo, callback, isShowLoading, isQueryAllSubject) {
                 geo = {}
             }
             //init subjectid
-            if (subjectId != null && isQueryAllSubject != true) {
+            if (THIS_SUBJECT_ID != null && isQueryAllSubject != true) {
                 if (geo.where == null) {
-                    geo.where = {_id: subjectId}
+                    geo.where = {_id: THIS_SUBJECT_ID}
                 } else if (geo.where._id == null) {
-                    geo.where._id = subjectId
+                    geo.where._id = THIS_SUBJECT_ID
                 }
             }
             MY_YUN.yunSync("database",
-                {queryType: "query", geo: geo, dbName: dbName},
+                {queryType: "query", geo: geo, dbName: THIS_DB_NAME},
                 callback, isShowLoading)//code,arr
         }
     } catch (e) {
@@ -97,8 +97,8 @@ function queryLocalData(geo) {
             //正向选择
             Object.keys(geo.field).map(field => {
                 if (geo.field[field] == true) {
-                    if (LOCAL_CACHE[field] != null) {
-                        newCache[field] = LOCAL_CACHE[field]
+                    if (THIS_SUBJECT_CACHE[field] != null) {
+                        newCache[field] = THIS_SUBJECT_CACHE[field]
                     } else {
                         try {
                             //read local data to cache
@@ -106,7 +106,7 @@ function queryLocalData(geo) {
                             if (MY_FILE.isExist(fPath) == false) {
                                 MY_FILE.writeFile(fPath, "{}")
                             }
-                            newCache[field] = LOCAL_CACHE[field] = JSON.parse(MY_FILE.readFile(fPath))
+                            newCache[field] = THIS_SUBJECT_CACHE[field] = JSON.parse(MY_FILE.readFile(fPath))
                         } catch (e) {
                             err("read local data is fail", e)
                         }
@@ -123,7 +123,7 @@ function queryLocalData(geo) {
             // }
             return JSON.parse(JSON.stringify(newCache))
         } else {
-            return JSON.parse(JSON.stringify(LOCAL_CACHE))
+            return JSON.parse(JSON.stringify(THIS_SUBJECT_CACHE))
         }
     } catch (e) {
         err(e)
@@ -147,9 +147,9 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
                 mask: true//防止触摸
             })
         }
-        const dbPath=getDBPath()
+        const dbPath = getDBPath()
         const mediatypes = queryLocalData({field: {settings: true}}).settings.mediatypes
-        const skcodeArr= Object.keys(infos)
+        const skcodeArr = Object.keys(infos)
         var downloadNumber = 0
         skcodeArr.map(skcode => {
             const infoData = infos[skcode]
@@ -166,17 +166,17 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
                         MY_FILE.rmPath(mediaType)
                     }
                     downloadNumber += 1
-                    MY_YUN.downloadFileSync(mediaPath.replace(dbPath, "").replace("/media/","/"),
+                    MY_YUN.downloadFileSync(mediaPath.replace(dbPath, "").replace("/media/", "/"),
                         mediaPath, (code) => {
-                        downloadNumber -= 1
-                        if (downloadNumber == 0) {
-                            mcallback(code)
-                        }
-                    }, false)
+                            downloadNumber -= 1
+                            if (downloadNumber == 0) {
+                                mcallback(code)
+                            }
+                        }, false)
                 }
             }
         })
-        if(skcodeArr.length==0){
+        if (skcodeArr.length == 0) {
             mcallback(true)
         }
     } catch (e) {
@@ -220,7 +220,7 @@ function switchSubjectByYunSync(callback, isShowLoading) {
     queryYunDataSync({field: {_id: true, subject: true}}, (code, arr) => {
         const mcallback = (code) => {
             if (typeof callback == "function") {
-                callback(code != null ? code : (subjectId != null))
+                callback(code != null ? code : (THIS_SUBJECT_ID != null))
             }
         }
         try {
@@ -231,12 +231,12 @@ function switchSubjectByYunSync(callback, isShowLoading) {
                 } else {
                     _SHOWACTIONSHEET(arr.map(o => o.subject), (sval, sindex) => {
                         const downloadSubject = () => {
-                            if (subjectId != arr[sindex]._id) {
-                                subjectId = arr[sindex]._id
-                                info("switch subjectid", subjectId)
+                            if (THIS_SUBJECT_ID != arr[sindex]._id) {
+                                THIS_SUBJECT_ID = arr[sindex]._id
+                                info("switch subjectid", THIS_SUBJECT_ID)
                             }
                             //clean cache
-                            LOCAL_CACHE = {}
+                            THIS_SUBJECT_CACHE = {}
                             //clean local data...
                             const subjectPath = getSubjectPath()
                             if (MY_FILE.isExist(subjectPath)) {
@@ -270,29 +270,29 @@ function switchSubjectSync(callback, isShowLoading, isDefaultSelected, defSubjec
         //check local subject is not null
         if (((localSubjectIdArr = MY_FILE.readDir(dbPath)).length > 0) == false) {
             //clean data
-            subjectId = null
-            LOCAL_CACHE = {}
+            THIS_SUBJECT_ID = null
+            THIS_SUBJECT_CACHE = {}
             switchSubjectByYunSync(callback, isShowLoading)
         } else {
             const mcallback = () => {
-                LOCAL_CACHE = {}//clean data
+                THIS_SUBJECT_CACHE = {}//clean data
                 if (typeof callback == "function") {
-                    callback(localSubjectIdArr.indexOf(subjectId) >= 0)//if subjectid is null throw err
+                    callback(localSubjectIdArr.indexOf(THIS_SUBJECT_ID) >= 0)//if subjectid is null throw err
                 }
             }
             //def select
             if (isDefaultSelected) {
                 //check def subjectId
                 if (defSubjectId != null && localSubjectIdArr.indexOf(defSubjectId) >= 0) {
-                    subjectId = defSubjectId
-                    info("switch subjectid", subjectId)
+                    THIS_SUBJECT_ID = defSubjectId
+                    info("switch subjectid", THIS_SUBJECT_ID)
                 }
                 //check old subjectId
-                else if (localSubjectIdArr.indexOf(subjectId) < 0) {
-                    subjectId = localSubjectIdArr[0]
-                    info("def selected first subjectid", subjectId)
+                else if (localSubjectIdArr.indexOf(THIS_SUBJECT_ID) < 0) {
+                    THIS_SUBJECT_ID = localSubjectIdArr[0]
+                    info("def selected first subjectid", THIS_SUBJECT_ID)
                 } else {
-                    info("def old subjectid", subjectId)
+                    info("def old subjectid", THIS_SUBJECT_ID)
                 }
                 mcallback()
             } else {
@@ -304,8 +304,8 @@ function switchSubjectSync(callback, isShowLoading, isDefaultSelected, defSubjec
                         //switch by yun
                         switchSubjectByYunSync(callback, isShowLoading)
                     } else {
-                        subjectId = localSubjectIdArr[sindex]
-                        info("selected subjectid", subjectId)
+                        THIS_SUBJECT_ID = localSubjectIdArr[sindex]
+                        info("selected subjectid", THIS_SUBJECT_ID)
                         mcallback()
                     }
                 }, mcallback)
@@ -324,26 +324,28 @@ function switchSubjectSync(callback, isShowLoading, isDefaultSelected, defSubjec
 
 
 function getSubjectId() {
-    return subjectId
+    return THIS_SUBJECT_ID
 }
 
-function getDBPath(){
-    return MY_FILE.getUserDir() + dbName + "/"
+function getDBPath() {
+    //userDir/dbName/
+    return MY_FILE.getUserDir() + THIS_DB_NAME + "/"
 }
+
 function getSubjectPath(subjectid1) {
-    return getDBPath() + (subjectid1 != null ? subjectid1 : subjectId) + "/"
+    //dbPath/subjectid
+    return getDBPath() + (subjectid1 != null ? subjectid1 : THIS_SUBJECT_ID) + "/"
 }
 
-function getMediaDir() {
-    return getSubjectPath() + "media/"
+function getMediaDir(subjectid1) {
+    //subjectPath/media/
+    return getSubjectPath(subjectid1) + "media/"
 }
 
-function getMediaPathByMType(skcode, mediaType, suffix, isCheckExist, infoData) {
+function getMediaPathByMType(skcode, mediaType, suffix, isCheckExist, subjectid) {
     try {
-        if (suffix == null && infoData != null && typeof infoData[mediaType] == "string") {
-            suffix = infoData[mediaType]
-        }
-        const mediaPath = getMediaDir() + mediaType + "/" + skcode + "." + suffix
+        //mediaDir/mediatype/skcode.suffix
+        const mediaPath = getMediaDir(subjectid) + mediaType + "/" + skcode + "." + suffix
         return isCheckExist == false || MY_FILE.isExist(mediaPath) ? mediaPath : null
     } catch (e) {
         err(e)
@@ -363,9 +365,9 @@ function loopUpdateCache(updateGeo, data1, dk1) {
     if (data1 == null) {
         const qGeo = {field: {}}
         Object.keys(updateGeo).map(field => qGeo.field[field] = true)
-        LOCAL_CACHE = {}//clean cache data
+        THIS_SUBJECT_CACHE = {}//clean cache data
         queryLocalData(qGeo)
-        data1 = LOCAL_CACHE
+        data1 = THIS_SUBJECT_CACHE
     }
 
     if (updateGeo instanceof Array && data1 instanceof Array) {
@@ -472,8 +474,8 @@ function updateLocalData(updateGeo) {
         loopUpdateCache(updateGeo)
         const subjectPath = getSubjectPath()
         var code = true
-        Object.keys(LOCAL_CACHE).map(field => {
-            const wcode = MY_FILE.writeFile(subjectPath + field, JSON.stringify(LOCAL_CACHE[field]))
+        Object.keys(THIS_SUBJECT_CACHE).map(field => {
+            const wcode = MY_FILE.writeFile(subjectPath + field, JSON.stringify(THIS_SUBJECT_CACHE[field]))
             if (wcode != true) {
                 code = false
             }
@@ -486,8 +488,9 @@ function updateLocalData(updateGeo) {
         return false
     }
 }
-function removeProgress(){
-    try{
+
+function removeProgress() {
+    try {
         //remove progress
         const proPath = getSubjectPath() + "progress"
         if (MY_FILE.isExist(proPath)) {
@@ -498,72 +501,122 @@ function removeProgress(){
                 MY_FILE.rmPath(getSubjectPath() + "progress")
             }
         }
-    }catch (e){
+    } catch (e) {
         err(e)
     }
 }
 
-function uploadLocalSubjectToYun(subjectid1, callback, isShowLoading) {
+function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
     const mcallback = (code1) => {
+        if (isShowLoading) {
+            wx.hideLoading()
+        }
         if (typeof callback == "function") {
             callback(code1)
         }
     }
     try {
-        const subjectPath = getSubjectPath(subjectid1)
-        const newSubject = {}
+        //create subject
+        if (isShowLoading) {
+            wx.showLoading({
+                title: 'create subject...',
+                mask: true//防止触摸
+            })
+        }
+        const newSubjectObj = {}
         //filter field
-        const filterField = [
+        const unSaveFieldArr = [
             // "counts","golds","progress"
         ]
-        MY_FILE.readDir(subjectPath).filter(fname => MY_FILE.isDir(subjectPath + fname) == false)
+        const subjectPath = getSubjectPath(subjectid)
+        MY_FILE.readDir(subjectPath)
+            //filter all file
+            .filter(fname => MY_FILE.isDir(subjectPath + fname) == false)
+            //all file to subjectObj
             .map(field => {
-                const jsonObj = JSON.parse(MY_FILE.readFile(getSubjectPath() + field))
-                if (filterField.indexOf(field) < 0) {
-                    newSubject[field] = jsonObj
+                var fieldObj = null
+                try {
+                    fieldObj = JSON.parse(MY_FILE.readFile(subjectPath + field))
+                } catch (e) {
+                    info("read field is fail", subjectPath + field)
+                }
+                //check is filter field
+                if (unSaveFieldArr.indexOf(field) < 0 && fieldObj != null) {
+                    newSubjectObj[field] = fieldObj
                 } else {
-                    if (jsonObj instanceof Array) {
-                        newSubject[field] = []
+                    if (fieldObj instanceof Array) {
+                        newSubjectObj[field] = []
                     } else {
-                        switch (typeof jsonObj) {
+                        switch (typeof fieldObj) {
                             case "object":
-                                newSubject[field] = {}
+                                newSubjectObj[field] = {}
                                 break;
                             case "string":
-                                newSubject[field] = ""
+                                newSubjectObj[field] = ""
                                 break;
                             case "number":
-                                newSubject[field] = -1
+                                newSubjectObj[field] = -1
                                 break;
                             case "boolean":
-                                newSubject[field] = false
+                                newSubjectObj[field] = false
                                 break;
                         }
                     }
                 }
             })
-        //up to yun
+
+        //remove old subject and save subject to yun
+        if (isShowLoading) {
+            wx.hideLoading()
+            wx.showLoading({
+                title: 'save subject to yun...',
+                mask: true//防止触摸
+            })
+        }
         MY_YUN.yunSync("database",
-            {queryType: "mupdate", geo: {where: {_id: subjectid1}}, newSubject: newSubject, dbName: dbName},
-            (code2) => {
-                if (code2) {
-                    //show loading
+            {queryType: "mupdate", geo: {where: {_id: subjectid}}, newSubject: newSubjectObj, dbName: THIS_DB_NAME},
+            (code1) => {
+                info("update subject to yun is", code1)
+                if (code1) {
+                    //del yun media...
                     if (isShowLoading) {
+                        wx.hideLoading()
                         wx.showLoading({
-                            title: 'delYFile...',
+                            title: 'del yun media...',
                             mask: true//防止触摸
                         })
                     }
-                    //del yun file...
-                    MY_YUN.yunSync("deldir",
-                        {dirName: getSubjectId()},
-                        (code) => {
+                    MY_YUN.yunSync("deldir", {dirName: subjectid},
+                        (code2) => {
                             wx.hideLoading()
-                            //upload yun file...
-                            if (code) {
-                                uploadLocalMediaToYunSync(newSubject.infos, newSubject.settings.mediatypes, mcallback, isShowLoading)
+                            info("del yun meida is",code2)
+                            if (code2) {
+                                //find all media path
+                                const mediaPathArr=[]
+                                Object.keys(newSubjectObj.infos).map(skcode => {
+                                    const infoData=newSubjectObj.infos[skcode]
+                                    for (const mediaType in infoData) {
+                                        //check media type is not null
+                                        if (
+                                            newSubjectObj.settings.mediatypes.indexOf(mediaType) >= 0
+                                            && typeof infoData[mediaType] == "string"
+                                            && infoData[mediaType].trim().length > 0
+                                        ) {
+                                            const mediaPath=getMediaPathByMType(skcode,mediaType,infoData[mediaType],true,subjectid)
+                                            if(mediaPath!=null){
+                                                mediaPathArr.push(mediaPath)
+                                            }
+                                        }
+                                    }
+                                })
+                                //upload local media to yun...
+                                uploadLocalMediaToYunSync(mediaPathArr, mcallback, isShowLoading)
+                            }else{
+                                mcallback(false)
                             }
                         }, false)
+                }else{
+                    mcallback(false)
                 }
             }, isShowLoading)//code,arr
     } catch (e) {
@@ -572,8 +625,11 @@ function uploadLocalSubjectToYun(subjectid1, callback, isShowLoading) {
     }
 }
 
-function uploadLocalMediaToYunSync(infos, mediatypes, callback, isShowLoading) {
+function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
     const mcallback = (code1) => {
+        if (isShowLoading) {
+            wx.hideLoading()
+        }
         if (typeof callback == "function") {
             callback(code1)
         }
@@ -581,45 +637,40 @@ function uploadLocalMediaToYunSync(infos, mediatypes, callback, isShowLoading) {
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'upload...',
+                title: 'upload media to yun...',
                 mask: true//防止触摸
             })
         }
-
+        const dbPath = getDBPath()
+        const upFailArr={}
         var isUpload = false
-        var uploadNumber = 0
-        const dbPath=getDBPath()
-        Object.keys(infos).map(skcode => {
-            const infoData = infos[skcode]
-            for (const mediaType in infoData) {
-                if (
-                    mediatypes.indexOf(mediaType) >= 0
-                    && typeof infoData[mediaType] == "string"
-                    && infoData[mediaType].trim().length > 0
-                ) {
-                    const localPath = getMediaPathByMType(skcode, mediaType, infoData[mediaType], true)
-                    //check media is exist
-                    if (localPath != null) {
-                        isUpload = true
-                        uploadNumber += 1
-                        MY_YUN.uploadFileSync(localPath, localPath.replace(dbPath, "")
-                            .replace("/media/","/"), (code) => {
-                            uploadNumber -= 1
-                            if (uploadNumber == 0) {
-                                if (isShowLoading) {
-                                    wx.hideLoading()
-                                }
-                                mcallback(code)
-                            }
-                        }, false)
+        var uploadCount = 0
+        mediaPathArr.map(mediaPath=> {
+            isUpload = true
+            uploadCount += 1
+            MY_YUN.uploadFileSync(mediaPath, mediaPath.replace(dbPath, "").replace("/media/", "/"),
+                (code) => {
+                    uploadCount -= 1
+                    //up fail
+                    if(!code){
+                        upFailArr.push(mediaPath)
                     }
-                }
-            }
+                    //end
+                    if (uploadCount == 0) {
+                        if(upFailArr.length==0){
+                            mcallback(true)
+                        }else{
+                            app.showModal("re upload?"+upFailArr.join(","),()=>{
+                                uploadLocalMediaToYunSync(upFailArr,callback,isShowLoading)
+                            },()=>{
+                                mcallback(false)
+                            })
+                        }
+                    }
+                }, false)
         })
+        //not update
         if (isUpload == false) {
-            if (isShowLoading) {
-                wx.hideLoading()
-            }
             mcallback(true)
         }
     } catch (e) {
@@ -641,7 +692,7 @@ module.exports.query1 = queryLocalData
 
 module.exports.UPDATE_TYPES = UPDATE_TYPES
 module.exports.update1 = updateLocalData
-module.exports.uploadLocalSubjectToYun = uploadLocalSubjectToYun
+module.exports.uploadLocalSubjectToYunSync = uploadLocalSubjectToYunSync
 
 module.exports.getSubjectId = getSubjectId
 module.exports.getSubjectPath = getSubjectPath
