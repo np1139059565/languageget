@@ -5,7 +5,7 @@
     </view>
     <view class="c-scroll">
         <view class="c-table">
-            <view wx:for="{{trArr}}" wx:for-item="tr1" class="c-tr">
+            <view wx:for="{{dTrArr}}" wx:for-item="tr1" class="c-tr">
                 <view class="c-td c-tip">{{tr1.k}}</view>
                 <view wx:for="{{tr1.tdArr}}" wx:for-item="td1" class="c-td">
                     <!--                picker-->
