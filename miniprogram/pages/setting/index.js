@@ -25,12 +25,12 @@ Page({
                             evData: "/pages/table/index",
                         },
                         //ttttttttttt
-                        {
-                            type: "button",
-                            text: "files",
-                            ev: "openPage",
-                            evData: "/pages/file/index",
-                        }
+                        // {
+                        //     type: "button",
+                        //     text: "files",
+                        //     ev: "openPage",
+                        //     evData: "/pages/file/index",
+                        // }
                     ]
                 },
                 {
@@ -114,7 +114,7 @@ Page({
                 //show menu
                 app.showActionSheet([
                     ///ttttttttttt
-                    "upload",
+                    // "upload",
                     "remove",
                     "edit",
                     "download"
