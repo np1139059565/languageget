@@ -311,11 +311,17 @@ Page({
                                 this.removeLineBySKEY(skey, true)
                                 this.tableUpdata()
                             } else {
+                                wx.showLoading({
+                                    title: 'remove...',
+                                    mask: true//防止触摸
+                                })
                                 this.data.dTable.lineArr.map((info1,i) => {
                                     this.uploadProgress(this.data.dTable.lineArr.length,i)
-                                    this.removeLineBySKEY(info1[SETTINGS.learnkey], true)
+                                    this.removeLineBySKEY(info1[SETTINGS.learnkey], false)
                                 })
+                                //end
                                 this.uploadProgress(this.data.dTable.lineArr.length,this.data.dTable.lineArr.length)
+                                wx.hideLoading()
                                 this.tableUpdata()
                             }
                         })

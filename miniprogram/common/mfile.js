@@ -179,6 +179,9 @@ function copyFile(srcFPath, dstFPath) {
             }
             const code = FSM.copyFileSync(srcFPath, dstFPath) == null
             info("copy file " + srcFPath, dstFPath, code)
+            if(!code){
+                err("copy file is fail",srcFPath,dstFPath)
+            }
             return code
         } else {
             err("src path is not file")
@@ -196,32 +199,39 @@ function copyFile(srcFPath, dstFPath) {
  * @param dstPath wxfile://usr/languageget/
  */
 function copyDir(srcPath, dstPath,upProgressEvent) {
-    const loopCopy = (srcPath1, dstPath1) => {
+    try{
         // check dst path
-        if (!dstPath1.endsWith("/")) {
-            dstPath1 += "/"
+        if (!dstPath.endsWith("/")) {
+            dstPath += "/"
         }
-        if (isDir(srcPath1)) {
-            // check src path
-            if (!srcPath1.endsWith("/")) {
-                srcPath1 += "/"
-            }
-            const pName = srcPath1.split("/").reverse()[1]
-            const cNameArr = readDir(srcPath1)
-            return cNameArr.map((cname,i) =>{
-                //up progress
-                if(typeof upProgressEvent=="function"){
-                    upProgressEvent(cNameArr.length,i)
+        //check is exist
+        if (isExist(srcPath)) {
+            //check is dir
+            if (isDir(srcPath)) {
+                // check src path
+                if (!srcPath.endsWith("/")) {
+                    srcPath += "/"
                 }
-                loopCopy(srcPath1 + cname, dstPath1 + pName)
-            }).filter(r => r).length == cNameArr.length
-        } else if (isExist(srcPath1)) {
-            return copyFile(srcPath1, dstPath1 + srcPath1.split("/").reverse()[0])
+                const pName = srcPath.split("/").reverse()[1]
+                const cNameArr = readDir(srcPath)
+                return cNameArr.map((cname,i) =>{
+                    //up progress
+                    if(typeof upProgressEvent=="function"){
+                        upProgressEvent(cNameArr.length,i)
+                    }
+                    return copyDir(srcPath + cname, dstPath + pName,upProgressEvent)
+                }).filter(code => code).length == cNameArr.length
+            } else{
+                return copyFile(srcPath, dstPath + srcPath.split("/").reverse()[0])
+            }
         } else {
+            err("not find src path",srcPath)
             return false
         }
+    }catch (e){
+        err(e)
+        return false
     }
-    return loopCopy(srcPath, dstPath)
 }
 
 function downUrlFileSync(url, localPath, callback, isShowLoading) {
