@@ -105,7 +105,7 @@ Page({
             var tdInfo=null
             this.data.dTrArr.filter(trInfo =>
                 trInfo.tdArr.filter(tdInfo1 =>{
-                    if(tdInfo1.evData == subjectId){
+                    if(tdInfo1.evData2 == subjectId){
                         tdInfo=tdInfo1
                     }
                 }))
@@ -153,7 +153,7 @@ Page({
             var newSubjectName=null
             this.data.dTrArr.filter(trInfo =>
                 trInfo.tdArr.filter(tdInfo => {
-                        if (tdInfo.evData == subjectId) {
+                        if (tdInfo.evData2 == subjectId) {
                             newSubjectName=tdInfo.text.trim().toLowerCase()
                         }
                     }))
