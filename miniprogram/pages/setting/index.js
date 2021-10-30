@@ -96,11 +96,15 @@ Page({
     showSubjectMenu: function (e) {
         try {
             const subjectId = e.currentTarget.dataset.event1Data1
-            const tdInfo=this.data.dTrArr.filter(trInfo =>
-                trInfo.tdArr.filter(tdInfo =>
-                    tdInfo.evData == subjectId))[0]
+            var tdInfo=null
+            this.data.dTrArr.filter(trInfo =>
+                trInfo.tdArr.filter(tdInfo1 =>{
+                    if(tdInfo1.evData == subjectId){
+                        tdInfo=tdInfo1
+                    }
+                }))
             //check is open edit
-            if(tdInfo.type!="input"){
+            if(tdInfo!=null&&tdInfo.type!="input"){
                 //show menu
                 app.showActionSheet([
                     ///ttttttttttt
