@@ -141,7 +141,7 @@ App({
                                 // this.data.mlog.info("not selected.")
                                 cancelcallback()
                             }else{
-                                this.data.mlog.err("not selected.")
+                                // this.data.mlog.err("not selected.")
                             }
                         }
                     } catch (e) {
