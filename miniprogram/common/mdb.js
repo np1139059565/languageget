@@ -131,7 +131,7 @@ function queryLocalData(geo) {
     }
 }
 
-function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
+function downloadYunMediaToLocalSync(infos, callback, isShowLoading,upProgressEvent) {
     const mcallback = (code1) => {
         if (isShowLoading) {
             wx.hideLoading()
@@ -150,7 +150,8 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
         const dbPath = getDBPath()
         const mediatypes = queryLocalData({field: {settings: true}}).settings.mediatypes
         const skcodeArr = Object.keys(infos)
-        var downloadNumber = 0
+        var progressCount=0
+        var downloadCount = 0
         skcodeArr.map(skcode => {
             const infoData = infos[skcode]
             for (const mediaType in infoData) {
@@ -165,11 +166,17 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
                     if (MY_FILE.isExist(mediaPath)) {
                         MY_FILE.rmPath(mediaType)
                     }
-                    downloadNumber += 1
+                //down new media
+                    progressCount+=1
+                    downloadCount += 1
                     MY_YUN.downloadFileSync(mediaPath.replace(dbPath, "").replace("/media/", "/"),
                         mediaPath, (code) => {
-                            downloadNumber -= 1
-                            if (downloadNumber == 0) {
+                            downloadCount -= 1
+                            if(typeof upProgressEvent=="function"){
+                                var pro=progressCount*0.5+(progressCount-downloadCount)*0.5
+                                upProgressEvent(progressCount,pro)
+                            }
+                            if (downloadCount == 0) {
                                 mcallback(code)
                             }
                         }, false)
@@ -185,7 +192,7 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading) {
     }
 }
 
-function downloadSubjectToLocalSync(callback, isShowLoading) {
+function downloadSubjectToLocalSync(callback, isShowLoading,upProgressEvent) {
     queryYunDataSync({}, (code, arr) => {
         const mcallback = (code1) => {
             if (typeof callback == "function") {
@@ -196,15 +203,18 @@ function downloadSubjectToLocalSync(callback, isShowLoading) {
             if (code && arr != null && arr[0] != null) {
                 const datas = arr[0]
                 //write data to local file by field
-                for (const field in datas) {
+                Object.keys(datas).map((field,i)=>{
+                    if(typeof upProgressEvent=="function"){
+                        upProgressEvent(Object.keys(datas).length,i*0.5)
+                    }
                     const wcode = MY_FILE.writeFile(getSubjectPath() + field, JSON.stringify(datas[field]))
                     if (!wcode) {
                         code = false
                         err("write data is err", field)
                     }
-                }
+                })
                 //download yun media
-                downloadYunMediaToLocalSync(datas.infos, callback, isShowLoading)
+                downloadYunMediaToLocalSync(datas.infos, callback, isShowLoading,upProgressEvent)
             } else {
                 err("read yun data is err")
                 mcallback(false)
@@ -216,7 +226,8 @@ function downloadSubjectToLocalSync(callback, isShowLoading) {
     }, isShowLoading)
 }
 
-function switchSubjectByYunSync(callback, isShowLoading) {
+function switchSubjectByYunSync(callback, isShowLoading,upProgressEvent) {
+    //get all subject
     queryYunDataSync({field: {_id: true, subject: true}}, (code, arr) => {
         const mcallback = (code) => {
             if (typeof callback == "function") {
@@ -229,8 +240,10 @@ function switchSubjectByYunSync(callback, isShowLoading) {
                     err("subject arr length is 0.")
                     mcallback()
                 } else {
+                    //selected subject
                     _SHOWACTIONSHEET(arr.map(o => o.subject), (sval, sindex) => {
-                        const downloadSubject = () => {
+                        const downloadYunSubjectCallback = () => {
+                            //switch this subjectid
                             if (THIS_SUBJECT_ID != arr[sindex]._id) {
                                 THIS_SUBJECT_ID = arr[sindex]._id
                                 info("switch subjectid", THIS_SUBJECT_ID)
@@ -244,13 +257,13 @@ function switchSubjectByYunSync(callback, isShowLoading) {
                             }
                             MY_FILE.mkDir(subjectPath)
                             //download yun subject to local
-                            downloadSubjectToLocalSync(callback, isShowLoading)
+                            downloadSubjectToLocalSync(callback, isShowLoading,upProgressEvent)
                         }
                         if (localSubjectIdArr.indexOf(arr[sindex]._id) >= 0) {
-                            _SHOWMODAL("cover local subject?", downloadSubject, () => {
+                            _SHOWMODAL("cover local subject?", downloadYunSubjectCallback, () => {
                             })
                         } else {
-                            downloadSubject()
+                            downloadYunSubjectCallback()
                         }
                     }, mcallback)
                 }

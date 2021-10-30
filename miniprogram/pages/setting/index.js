@@ -648,7 +648,10 @@ Page({
     },
     downYunSubject: function () {
         try {
-            app.data.mdb.switchSubjectByYunSync(this.onLoad,true)
+            app.data.mdb.switchSubjectByYunSync((code)=>{
+                this.uploadProgress(1,1)
+                this.onLoad()
+            },true,this.uploadProgress)
         } catch (e) {
             app.data.mlog.err(e)
         }
