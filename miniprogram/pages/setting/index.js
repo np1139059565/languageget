@@ -754,7 +754,7 @@ Page({
             app.showModal("upload subject to yun?", () => {
                 app.data.mdb.uploadLocalSubjectToYunSync(subjectId, (code) => {
                     app.showModal("upload local subject to yun is " + code)
-                }, true)
+                }, true,this.uploadProgress)
             }, () => {
             })
         } catch (e) {

@@ -506,7 +506,7 @@ function removeProgress() {
     }
 }
 
-function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
+function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgressEvent) {
     const mcallback = (code1) => {
         if (isShowLoading) {
             wx.hideLoading()
@@ -529,41 +529,44 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
             // "counts","golds","progress"
         ]
         const subjectPath = getSubjectPath(subjectid)
-        MY_FILE.readDir(subjectPath)
+        const allFieldFileArr = MY_FILE.readDir(subjectPath)
             //filter all file
             .filter(fname => MY_FILE.isDir(subjectPath + fname) == false)
-            //all file to subjectObj
-            .map(field => {
-                var fieldObj = null
-                try {
-                    fieldObj = JSON.parse(MY_FILE.readFile(subjectPath + field))
-                } catch (e) {
-                    info("read field is fail", subjectPath + field)
-                }
-                //check is filter field
-                if (unSaveFieldArr.indexOf(field) < 0 && fieldObj != null) {
-                    newSubjectObj[field] = fieldObj
+        //all file to subjectObj
+        allFieldFileArr.map((field, i) => {
+            if (typeof upProgressEvent == "function") {
+                upProgressEvent(allFieldFileArr.length, i *0.4)
+            }
+            var fieldObj = null
+            try {
+                fieldObj = JSON.parse(MY_FILE.readFile(subjectPath + field))
+            } catch (e) {
+                info("read field is fail", subjectPath + field)
+            }
+            //check is filter field
+            if (unSaveFieldArr.indexOf(field) < 0 && fieldObj != null) {
+                newSubjectObj[field] = fieldObj
+            } else {
+                if (fieldObj instanceof Array) {
+                    newSubjectObj[field] = []
                 } else {
-                    if (fieldObj instanceof Array) {
-                        newSubjectObj[field] = []
-                    } else {
-                        switch (typeof fieldObj) {
-                            case "object":
-                                newSubjectObj[field] = {}
-                                break;
-                            case "string":
-                                newSubjectObj[field] = ""
-                                break;
-                            case "number":
-                                newSubjectObj[field] = -1
-                                break;
-                            case "boolean":
-                                newSubjectObj[field] = false
-                                break;
-                        }
+                    switch (typeof fieldObj) {
+                        case "object":
+                            newSubjectObj[field] = {}
+                            break;
+                        case "string":
+                            newSubjectObj[field] = ""
+                            break;
+                        case "number":
+                            newSubjectObj[field] = -1
+                            break;
+                        case "boolean":
+                            newSubjectObj[field] = false
+                            break;
                     }
                 }
-            })
+            }
+        })
 
         //remove old subject and save subject to yun
         if (isShowLoading) {
@@ -579,6 +582,9 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
                 info("update subject to yun is", code1)
                 if (code1) {
                     //del yun media...
+                    if (typeof upProgressEvent == "function") {
+                        upProgressEvent(allFieldFileArr.length, allFieldFileArr.length*0.4)
+                    }
                     if (isShowLoading) {
                         wx.hideLoading()
                         wx.showLoading({
@@ -588,9 +594,12 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
                     }
                     MY_YUN.yunSync("deldir", {dirName: subjectid},
                         (code2) => {
-                            info("del yun meida is",code2)
+                            info("del yun meida is", code2)
                             if (code2) {
                                 //find all media path
+                                if (typeof upProgressEvent == "function") {
+                                    upProgressEvent(allFieldFileArr.length, allFieldFileArr.length*0.5)
+                                }
                                 if (isShowLoading) {
                                     wx.hideLoading()
                                     wx.showLoading({
@@ -598,9 +607,9 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
                                         mask: true//防止触摸
                                     })
                                 }
-                                const mediaPathArr=[]
+                                const mediaPathArr = []
                                 Object.keys(newSubjectObj.infos).map(skcode => {
-                                    const infoData=newSubjectObj.infos[skcode]
+                                    const infoData = newSubjectObj.infos[skcode]
                                     for (const mediaType in infoData) {
                                         //check media type is not null
                                         if (
@@ -608,20 +617,20 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
                                             && typeof infoData[mediaType] == "string"
                                             && infoData[mediaType].trim().length > 0
                                         ) {
-                                            const mediaPath=getMediaPathByMType(skcode,mediaType,infoData[mediaType],true,subjectid)
-                                            if(mediaPath!=null){
+                                            const mediaPath = getMediaPathByMType(skcode, mediaType, infoData[mediaType], true, subjectid)
+                                            if (mediaPath != null) {
                                                 mediaPathArr.push(mediaPath)
                                             }
                                         }
                                     }
                                 })
                                 //upload local media to yun...
-                                uploadLocalMediaToYunSync(mediaPathArr, mcallback, isShowLoading)
-                            }else{
+                                uploadLocalMediaToYunSync(mediaPathArr, mcallback, isShowLoading,upProgressEvent)
+                            } else {
                                 mcallback(false)
                             }
                         }, false)
-                }else{
+                } else {
                     mcallback(false)
                 }
             }, isShowLoading)//code,arr
@@ -631,7 +640,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading) {
     }
 }
 
-function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
+function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading,upProgressEvent) {
     const mcallback = (code1) => {
         if (isShowLoading) {
             wx.hideLoading()
@@ -648,27 +657,31 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading) {
             })
         }
         const dbPath = getDBPath()
-        const upFailArr=[]
+        const upFailArr = []
         var isUpload = false
         var uploadCount = 0
-        mediaPathArr.map(mediaPath=> {
+        mediaPathArr.map(mediaPath => {
             isUpload = true
             uploadCount += 1
             MY_YUN.uploadFileSync(mediaPath, mediaPath.replace(dbPath, "").replace("/media/", "/"),
                 (code) => {
                     uploadCount -= 1
                     //up fail
-                    if(!code){
+                    if (!code) {
                         upFailArr.push(mediaPath)
+                    }
+                    if (typeof upProgressEvent == "function") {
+                        var pro=mediaPathArr.length*0.5+(uploadCount-mediaPathArr.length)*0.5
+                        upProgressEvent(mediaPathArr.length,+pro )
                     }
                     //end
                     if (uploadCount == 0) {
-                        if(upFailArr.length==0){
+                        if (upFailArr.length == 0) {
                             mcallback(true)
-                        }else{
-                            _SHOWMODAL("re upload?"+upFailArr.join(","),()=>{
-                                uploadLocalMediaToYunSync(upFailArr,callback,isShowLoading)
-                            },()=>{
+                        } else {
+                            _SHOWMODAL("re upload?" + upFailArr.join(","), () => {
+                                uploadLocalMediaToYunSync(upFailArr, callback, isShowLoading)
+                            }, () => {
                                 mcallback(false)
                             })
                         }
