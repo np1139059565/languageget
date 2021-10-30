@@ -21,6 +21,7 @@
                     </button>
                     <!--                input-->
                     <input wx:elif="{{td1.type=='input'}}" catchinput="{{td1.ev}}" data-event1-data1="{{td1.evData}}"
+                           catchblur="{{td1.ev2}}" data-event1-data2="{{td1.evData2}}"
                            value="{{td1.text}}" style="border-bottom:1px solid"/>
                     <view wx:else decode="true">{{td1.text}}</view>
                 </view>

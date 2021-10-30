@@ -39,10 +39,8 @@
         <view class="c-tr">
             <view class="c-click c-td" wx:for="{{dTable.options}}" wx:for-item="item">
                 <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
-                       catchblur="{{item.ev2}}" data-event1-data2="{{item.evData2}}"
                        value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
-                <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" data-event1-data2="{{item.evData2}}"
-                      style="{{item.style}}">{{item.text}}</view>
+                <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
             </view>
         </view>
     </view>
