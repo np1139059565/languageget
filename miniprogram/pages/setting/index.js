@@ -141,9 +141,13 @@ Page({
         try{
             const subjectId = e.currentTarget.dataset.event1Data1
             const subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
-            const newSubjectName=this.data.dTrArr.filter(trInfo =>
-                trInfo.tdArr.filter(tdInfo =>
-                    tdInfo.evData == subjectId))[0].text.trim().toLowerCase()
+            var newSubjectName=null
+            this.data.dTrArr.filter(trInfo =>
+                trInfo.tdArr.filter(tdInfo => {
+                        if (tdInfo.evData == subjectId) {
+                            newSubjectName=tdInfo.text.trim().toLowerCase()
+                        }
+                    }))
             if(newSubjectName!=subjectName){
                 app.showModal("re '"+subjectName+"' to '"+newSubjectName+"'?",()=>{
                     app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",newSubjectName)
