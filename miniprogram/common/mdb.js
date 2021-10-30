@@ -671,7 +671,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading,upProgr
                         upFailArr.push(mediaPath)
                     }
                     if (typeof upProgressEvent == "function") {
-                        var pro=mediaPathArr.length*0.5+(uploadCount-mediaPathArr.length)*0.5
+                        var pro=mediaPathArr.length*0.5+(mediaPathArr.length-uploadCount)*0.5
                         upProgressEvent(mediaPathArr.length,+pro )
                     }
                     //end
