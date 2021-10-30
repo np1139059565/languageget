@@ -162,6 +162,8 @@ Page({
                     app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",JSON.stringify(newSubjectName))
                     this.onLoad()
                 },()=>{})
+            }else{
+                this.onLoad()
             }
         }catch (e1){
             app.data.mlog.err(e1)
