@@ -61,7 +61,7 @@ Page({
                     ev: "showSubjectMenu",
                     evData: subjectId,
                     ev2: "saveEditSubjectName",
-                    evData2: "0;" + this.data.dTrArr.length + ";0"
+                    evData2: "0;" + this.data.dTrArr.length + ";0" 
                 }]
             }))
             this.setData(this.data)
