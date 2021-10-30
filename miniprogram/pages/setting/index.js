@@ -146,7 +146,10 @@ Page({
     saveEditSubjectName:function (e){
         try{
             const subjectId = e.currentTarget.dataset.event1Data1
-            const subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
+            var subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
+            if(subjectName.startsWith("\"")){
+                subjectName=JSON.parse(newSubjectName)
+            }
             var newSubjectName=null
             this.data.dTrArr.filter(trInfo =>
                 trInfo.tdArr.filter(tdInfo => {
