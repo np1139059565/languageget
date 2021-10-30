@@ -53,17 +53,23 @@ Page({
             ]
             const dbPath = app.data.mdb.getDBPath()
             //get subject arr
-            app.data.mfile.readDir(dbPath).map(subjectId => this.data.dTrArr.push({
-                k: "",
-                tdArr: [{
-                    type: "button",
-                    text: app.data.mfile.readFile(dbPath + subjectId + "/subject"),//subject name
-                    ev: "showSubjectMenu",
-                    evData: subjectId,
-                    ev2: "saveEditSubjectName",
-                    evData2: "0;" + this.data.dTrArr.length + ";0" 
-                }]
-            }))
+            app.data.mfile.readDir(dbPath).map(subjectId => {
+                var subjectName=app.data.mfile.readFile(dbPath + subjectId + "/subject")
+                if(subjectName.startsWith("\"")){
+                    subjectName=JSON.parse(subjectName)
+                }
+                this.data.dTrArr.push({
+                    k: "",
+                    tdArr: [{
+                        type: "button",
+                        text: subjectName,//subject name
+                        ev: "showSubjectMenu",
+                        evData: subjectId,
+                        ev2: "saveEditSubjectName",
+                        evData2: "0;" + this.data.dTrArr.length + ";0"
+                    }]
+                })
+            })
             this.setData(this.data)
             this.switchSubjectSync1(true)
         } catch (e1) {
@@ -150,7 +156,7 @@ Page({
                     }))
             if(newSubjectName!=subjectName){
                 app.showModal("re '"+subjectName+"' to '"+newSubjectName+"'?",()=>{
-                    app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",newSubjectName)
+                    app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",JSON.stringify(newSubjectName))
                     this.onLoad()
                 },()=>{})
             }
