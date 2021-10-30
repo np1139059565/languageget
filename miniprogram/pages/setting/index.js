@@ -148,7 +148,7 @@ Page({
             const subjectId = e.currentTarget.dataset.event1Data1
             var subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
             if(subjectName.startsWith("\"")){
-                subjectName=JSON.parse(newSubjectName)
+                subjectName=JSON.parse(subjectName)
             }
             var newSubjectName=null
             this.data.dTrArr.filter(trInfo =>
@@ -161,7 +161,7 @@ Page({
                 app.showModal("re '"+subjectName+"' to '"+newSubjectName+"'?",()=>{
                     app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",JSON.stringify(newSubjectName))
                     this.onLoad()
-                },()=>{})
+                },this.onLoad)
             }else{
                 this.onLoad()
             }
