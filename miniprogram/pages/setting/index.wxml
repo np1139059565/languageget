@@ -16,6 +16,7 @@
                     </picker>
                     <!--                button-->
                     <button wx:elif="{{td1.type=='button'}}" catchtap="{{td1.ev}}" data-event1-data1="{{td1.evData}}"
+                            data-event1-data2="{{td1.evData2}}"
                             type="default" size="mini" plain="true" class="c-l-button">
                         {{td1.text}}
                     </button>

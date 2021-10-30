@@ -64,9 +64,9 @@ Page({
                         type: "button",
                         text: subjectName,//subject name
                         ev: "showSubjectMenu",
-                        evData: subjectId,
+                        evData: "0;" + this.data.dTrArr.length + ";0",
                         ev2: "saveEditSubjectName",
-                        evData2: "0;" + this.data.dTrArr.length + ";0"
+                        evData2: subjectId
                     }]
                 })
             })
@@ -101,7 +101,7 @@ Page({
     },
     showSubjectMenu: function (e) {
         try {
-            const subjectId = e.currentTarget.dataset.event1Data1
+            const subjectId = e.currentTarget.dataset.event1Data2
             var tdInfo=null
             this.data.dTrArr.filter(trInfo =>
                 trInfo.tdArr.filter(tdInfo1 =>{
@@ -145,7 +145,7 @@ Page({
     },
     saveEditSubjectName:function (e){
         try{
-            const subjectId = e.currentTarget.dataset.event1Data1
+            const subjectId = e.currentTarget.dataset.event1Data2
             var subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
             if(subjectName.startsWith("\"")){
                 subjectName=JSON.parse(subjectName)
