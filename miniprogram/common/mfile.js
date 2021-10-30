@@ -55,6 +55,14 @@ function readFile(filePath, encoding) {
     }
 }
 
+/**
+ *
+ * @param filePath
+ * @param conter
+ * @param isAppend false
+ * @param encoding utf-8
+ * @returns {boolean}
+ */
 function writeFile(filePath, conter, isAppend, encoding) {
     try {
         //check path

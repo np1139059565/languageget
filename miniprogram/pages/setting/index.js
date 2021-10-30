@@ -3,9 +3,9 @@ const app = getApp()
 var SETTINGS = null
 Page({
     data: {
-        dProgress:{
-            isShow:false,
-            pro:0,
+        dProgress: {
+            isShow: false,
+            pro: 0,
         },
         dTrArr: [
             // {k,tdArr:[{type,pickerval,rangeArr,ev,evData,coverVal,pickerval,text}]}
@@ -59,7 +59,9 @@ Page({
                     type: "button",
                     text: app.data.mfile.readFile(dbPath + subjectId + "/subject"),//subject name
                     ev: "showSubjectMenu",
-                    evData: subjectId
+                    evData: subjectId,
+                    ev2: "saveEditSubjectName",
+                    evData2: "0;" + this.data.dTrArr.length + ";0"
                 }]
             }))
             this.setData(this.data)
@@ -69,19 +71,19 @@ Page({
         }
     },
 
-    uploadProgress:function (total,p){
-        try{
+    uploadProgress: function (total, p) {
+        try {
             //up pro
-            this.data.dProgress.pro=(p/total*100)
+            this.data.dProgress.pro = (p / total * 100)
             //0<=pro<100 show
-            if(this.data.dProgress.pro>=0&&this.data.dProgress.pro<100){
-                this.data.dProgress.isShow=true
-            }else{
-                this.data.dProgress.isShow=false
+            if (this.data.dProgress.pro >= 0 && this.data.dProgress.pro < 100) {
+                this.data.dProgress.isShow = true
+            } else {
+                this.data.dProgress.isShow = false
             }
             this.setData(this.data)
-        }catch (e){
-            this.data.dProgress.isShow=false
+        } catch (e) {
+            this.data.dProgress.isShow = false
             this.setData(this.data)
             app.data.mlog.err(e)
         }
@@ -94,22 +96,57 @@ Page({
     showSubjectMenu: function (e) {
         try {
             const subjectId = e.currentTarget.dataset.event1Data1
-            app.showActionSheet(["download",
-                ///ttttttttttt
-                "upload",
-                "remove"], (sval) => {
-                switch (sval) {
-                    case "download":
-                        this.downLocalSubject(subjectId)
-                        break;
-                    case "upload":
-                        this.uploadSubjectToYun(subjectId)
-                        break;
-                    case "remove":
-                        this.removeSubject(subjectId)
-                }
-            })
+            const tdInfo=this.data.dTrArr.filter(trInfo =>
+                trInfo.tdArr.filter(tdInfo =>
+                    tdInfo.evData == subjectId))[0]
+            //check is open edit
+            if(tdInfo.type!="input"){
+                //show menu
+                app.showActionSheet([
+                    ///ttttttttttt
+                    "upload",
+                    "remove",
+                    "edit",
+                    "download"
+                ], (sval) => {
+                    switch (sval) {
+                        case "upload":
+                            this.uploadSubjectToYun(subjectId)
+                            break;
+                        case "remove":
+                            this.removeSubject(subjectId)
+                            break;
+                        case "edit":
+                            //open edit
+                            tdInfo.type = "input"
+                            this.setData(this.data)
+                            break;
+                        case "download":
+                            this.downLocalSubject(subjectId)
+                            break;
+                    }
+                })
+            }else{
+                this.changeInputStr(e)
+            }
         } catch (e1) {
+            app.data.mlog.err(e1)
+        }
+    },
+    saveEditSubjectName:function (e){
+        try{
+            const subjectId = e.currentTarget.dataset.event1Data1
+            const subjectName=app.data.mfile.readFile(app.data.mdb.getDBPath() + subjectId + "/subject").toLowerCase()//subject name
+            const newSubjectName=this.data.dTrArr.filter(trInfo =>
+                trInfo.tdArr.filter(tdInfo =>
+                    tdInfo.evData == subjectId))[0].text.trim().toLowerCase()
+            if(newSubjectName!=subjectName){
+                app.showModal("re '"+subjectName+"' to '"+newSubjectName+"'?",()=>{
+                    app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",newSubjectName)
+                    this.onLoad()
+                },()=>{})
+            }
+        }catch (e1){
             app.data.mlog.err(e1)
         }
     },
@@ -186,7 +223,7 @@ Page({
                             // pickerval:SETTINGS.heads.indexOf(v1),
                             type: "picker",
                             ev: "changePickerArr1",
-                            evData: settingk+";"+this.data.dTrArr.length + ";" + j,
+                            evData: settingk + ";" + this.data.dTrArr.length + ";" + j,
                             rangeArr: SETTINGS.heads
                         }
                         if (SETTINGS.heads.indexOf(v1) < 0) {
@@ -210,8 +247,8 @@ Page({
         try {
             headArr.map((h, dataIndex) => {
                 const trIndex = this.data.dTrArr.length
-                const trInfo={
-                    k:dataIndex>0?dataIndex:"heads",
+                const trInfo = {
+                    k: dataIndex > 0 ? dataIndex : "heads",
                     tdArr: [
                         {
                             text: h
@@ -237,20 +274,20 @@ Page({
                     ]
                 }
                 //remove up
-                if (dataIndex ==0) {
-                    trInfo.tdArr[1].type=""
-                    trInfo.tdArr[1].text=""
+                if (dataIndex == 0) {
+                    trInfo.tdArr[1].type = ""
+                    trInfo.tdArr[1].text = ""
                 }
                 //remove down
                 if (dataIndex >= headArr.length - 1) {
-                    trInfo.tdArr[2].type=""
-                    trInfo.tdArr[2].text=""
+                    trInfo.tdArr[2].type = ""
+                    trInfo.tdArr[2].text = ""
                 }
                 this.data.dTrArr.push(trInfo)
             })
             //add new head button
             this.data.dTrArr.push({
-                k:"add head",
+                k: "add head",
                 tdArr: [
                     {
                         type: "input",
@@ -273,8 +310,8 @@ Page({
     getTrInfoByFZKTS(FZKTSA2A) {
         try {
             FZKTSA2A.map((fzk2arr, dataIndex) => {
-                fzk2arr.push("↑","↓","x");
-                const trInfo={
+                fzk2arr.push("↑", "↓", "x");
+                const trInfo = {
                     k: dataIndex > 0 ? dataIndex : "fzkts",
                     tdArr: fzk2arr.map((h, tdIndex) => {
                         var pickerInfo = {
@@ -307,20 +344,20 @@ Page({
                         return pickerInfo
                     })
                 }
-                if (dataIndex ==0) {
-                    trInfo.tdArr[trInfo.tdArr.length - 2].type=""
-                    trInfo.tdArr[trInfo.tdArr.length - 2].text=""
+                if (dataIndex == 0) {
+                    trInfo.tdArr[trInfo.tdArr.length - 2].type = ""
+                    trInfo.tdArr[trInfo.tdArr.length - 2].text = ""
                 }
                 if (dataIndex >= FZKTSA2A.length - 1) {
-                    trInfo.tdArr[trInfo.tdArr.length - 2].type=""
-                    trInfo.tdArr[trInfo.tdArr.length - 2].text=""
+                    trInfo.tdArr[trInfo.tdArr.length - 2].type = ""
+                    trInfo.tdArr[trInfo.tdArr.length - 2].text = ""
                 }
                 this.data.dTrArr.push(trInfo)
 
             })
             //add new fzk button
             this.data.dTrArr.push({
-                k:"add fzk",
+                k: "add fzk",
                 tdArr: [
                     {
                         type: "button",
@@ -337,8 +374,8 @@ Page({
         try {
             inputArr.map((h, dataIndex) => {
                 const trIndex = this.data.dTrArr.length
-                const trInfo={
-                    k:dataIndex>0?dataIndex:"inputs",
+                const trInfo = {
+                    k: dataIndex > 0 ? dataIndex : "inputs",
                     tdArr: [
                         {
                             text: h
@@ -364,28 +401,29 @@ Page({
                     ]
                 }
                 //remove up
-                if (dataIndex ==0) {
-                    trInfo.tdArr[1].type=""
-                    trInfo.tdArr[1].text=""
+                if (dataIndex == 0) {
+                    trInfo.tdArr[1].type = ""
+                    trInfo.tdArr[1].text = ""
                 }
                 //remove down
                 if (dataIndex >= inputArr.length - 1) {
-                    trInfo.tdArr[2].type=""
-                    trInfo.tdArr[2].text=""
+                    trInfo.tdArr[2].type = ""
+                    trInfo.tdArr[2].text = ""
                 }
                 this.data.dTrArr.push(trInfo)
             })
 
             this.data.dTrArr.push({
-                k:"add input",
+                k: "add input",
                 tdArr: [{
-                pickerval: 0,
-                type: "picker",
-                coverVal: "+",
-                ev: "addInputHead",
-                evData: this.data.dTrArr.length,
-                rangeArr: SETTINGS.heads
-            }]})
+                    pickerval: 0,
+                    type: "picker",
+                    coverVal: "+",
+                    ev: "addInputHead",
+                    evData: this.data.dTrArr.length,
+                    rangeArr: SETTINGS.heads
+                }]
+            })
         } catch (e) {
             app.data.mlog.err(e)
         }
@@ -431,7 +469,7 @@ Page({
                 //save to local
                 app.data.mdb.update1({
                     settings: {
-                        fzkts: [SETTINGS.fzkts[SETTINGS.fzkts.length-1]]
+                        fzkts: [SETTINGS.fzkts[SETTINGS.fzkts.length - 1]]
                     }
                 })
                 this.onLoad()
@@ -502,16 +540,15 @@ Page({
                 }
             })
             SETTINGS = app.data.mdb.query1({field: {settings: true}}).settings
-            const firstIndex=this.data.dTrArr.findIndex(trInfo=>trInfo.k==settingk)
-            if(settingk=="heads"){
-                this.data.dTrArr.splice(firstIndex,SETTINGS.heads.length+1)
+            const firstIndex = this.data.dTrArr.findIndex(trInfo => trInfo.k == settingk)
+            if (settingk == "heads") {
+                this.data.dTrArr.splice(firstIndex, SETTINGS.heads.length + 1)
                 this.getTrInfoByHeadArr(SETTINGS.heads)
-            }else if(settingk=="fzkts"){
-                this.data.dTrArr.splice(firstIndex,SETTINGS.fzkts.length)
+            } else if (settingk == "fzkts") {
+                this.data.dTrArr.splice(firstIndex, SETTINGS.fzkts.length)
                 this.getTrInfoByFZKTS(SETTINGS.fzkts)
-            }
-            else if(settingk=="inputs"){
-                this.data.dTrArr.splice(firstIndex,SETTINGS.inputs.length+1)
+            } else if (settingk == "inputs") {
+                this.data.dTrArr.splice(firstIndex, SETTINGS.inputs.length + 1)
                 this.getTrInfoByByINPUTS(SETTINGS.inputs)
             }
             this.setData(this.data)
@@ -538,7 +575,7 @@ Page({
     changePickerArr1: function (e) {
         try {
             const tmp = e.currentTarget.dataset.event1Data1.split(";")
-            const settingk=tmp[0]
+            const settingk = tmp[0]
             const trIndex = tmp[1]
             const tdIndex = tmp[2]
             const sindex = e.detail.value
@@ -597,29 +634,29 @@ Page({
     downLocalSubject: function (subjectId) {
         try {
             // check is this subject
-            if (subjectId ==app.data.mdb.getSubjectId()) {
-                const subjectName=app.data.mdb.query1({field: {subject: true}}).subject
-                app.showModal("dowmload " + subjectName+ "?", () => {
+            if (subjectId == app.data.mdb.getSubjectId()) {
+                const subjectName = app.data.mdb.query1({field: {subject: true}}).subject
+                app.showModal("dowmload " + subjectName + "?", () => {
                     const tmpPath = app.data.mfile.getUserDir() + "tmp/"
-                    const mzipName=subjectId + ".mzip"
+                    const mzipName = subjectId + ".mzip"
                     try {
                         //clean tmp path
                         if (app.data.mfile.isExist(tmpPath)) {
                             app.data.mfile.rmPath(tmpPath)
                         }
                         //show progress
-                        this.data.dProgress.isShow=true
+                        this.data.dProgress.isShow = true
                         this.setData(this.data)
                         //package media
-                        const dbPath=app.data.mdb.getDBPath()
+                        const dbPath = app.data.mdb.getDBPath()
                         this.packMZIPSync(dbPath + subjectId, tmpPath, (code) => {
                             try {
                                 //hide progress
-                                this.data.dProgress.isShow=false
+                                this.data.dProgress.isShow = false
                                 this.setData(this.data)
                                 if (code) {
                                     wx.openDocument({
-                                        filePath: tmpPath+mzipName,
+                                        filePath: tmpPath + mzipName,
                                         showMenu: true,
                                         fileType: "xls",
                                         success(res) {
@@ -634,7 +671,7 @@ Page({
                             } catch (e2) {
                                 app.data.mlog.err(e2)
                             }
-                        },mzipName)
+                        }, mzipName)
                     } catch (e1) {
                         app.data.mlog.err(e1)
                         app.data.mfile.rmPath(tmpPath)
@@ -648,10 +685,10 @@ Page({
     },
     downYunSubject: function () {
         try {
-            app.data.mdb.switchSubjectByYunSync((code)=>{
-                this.uploadProgress(1,1)
+            app.data.mdb.switchSubjectByYunSync((code) => {
+                this.uploadProgress(1, 1)
                 this.onLoad()
-            },true,this.uploadProgress)
+            }, true, this.uploadProgress)
         } catch (e) {
             app.data.mlog.err(e)
         }
@@ -668,26 +705,26 @@ Page({
                         app.data.mfile.rmPath(tmpPath)
                     }
                     const filePath = res.tempFiles[0].path
-                    const fInfo=app.data.mfile.getFInfo(filePath)
-                    if (fInfo!=null && fInfo.isFile()) {
+                    const fInfo = app.data.mfile.getFInfo(filePath)
+                    if (fInfo != null && fInfo.isFile()) {
                         this.unmzipSync(filePath, tmpPath, (code) => {
                             try {
                                 if (code) {
-                                    const dbPath=app.data.mdb.getDBPath()
+                                    const dbPath = app.data.mdb.getDBPath()
                                     const subjectId = app.data.mfile.readDir(tmpPath)[0]
                                     const idPath = tmpPath + subjectId + "/_id"
                                     //check id
-                                    if (app.data.mfile.isExist(idPath)&&JSON.parse(app.data.mfile.readFile(idPath))==subjectId) {
+                                    if (app.data.mfile.isExist(idPath) && JSON.parse(app.data.mfile.readFile(idPath)) == subjectId) {
                                         const copySubject = (subjectName) => {
                                             wx.showLoading({
                                                 title: 'copy...',
                                                 mask: true//防止触摸
                                             })
                                             //copy file
-                                            const ccode=app.data.mfile.copyDir(tmpPath+subjectId,dbPath,this.uploadProgress)
+                                            const ccode = app.data.mfile.copyDir(tmpPath + subjectId, dbPath, this.uploadProgress)
                                             //end hide loading,progress
                                             wx.hideLoading()
-                                            this.uploadProgress(100,100)
+                                            this.uploadProgress(100, 100)
                                             app.showModal("copy " + subjectName
                                                 + " is " + ccode)
                                             //clean tmp
@@ -699,9 +736,9 @@ Page({
                                             }
                                         }
                                         //check is repeated
-                                        const subjectName=app.data.mfile.readFile(tmpPath+subjectId + "/subject")
+                                        const subjectName = app.data.mfile.readFile(tmpPath + subjectId + "/subject")
                                         if (app.data.mfile.isExist(dbPath + subjectId)) {
-                                            app.showModal("subject is repeated, do you cover it?", ()=>{
+                                            app.showModal("subject is repeated, do you cover it?", () => {
                                                 app.data.mfile.rmPath(dbPath + subjectId)
                                                 copySubject(subjectName)
                                             }, () => {
@@ -757,7 +794,7 @@ Page({
             app.showModal("upload subject to yun?", () => {
                 app.data.mdb.uploadLocalSubjectToYunSync(subjectId, (code) => {
                     app.showModal("upload local subject to yun is " + code)
-                }, true,this.uploadProgress)
+                }, true, this.uploadProgress)
             }, () => {
             })
         } catch (e) {
@@ -799,14 +836,14 @@ Page({
             const subjectId = subjectPath.split("/").reverse()[1]
             const loopReadFile = (path) => {
                 const FInfo = app.data.mfile.getFInfo(path)
-                if (FInfo!=null) {
+                if (FInfo != null) {
                     if (FInfo.isDirectory()) {
-                        const nodeArr=app.data.mfile.readDir(path)
-                        nodeArr.map((childName,i) => {
-                            this.uploadProgress(nodeArr.length,i)
+                        const nodeArr = app.data.mfile.readDir(path)
+                        nodeArr.map((childName, i) => {
+                            this.uploadProgress(nodeArr.length, i)
                             const cpath = path + childName
-                            const CFInfo=app.data.mfile.getFInfo(cpath)
-                            if(CFInfo!=null){
+                            const CFInfo = app.data.mfile.getFInfo(cpath)
+                            if (CFInfo != null) {
                                 loopReadFile(cpath + (CFInfo.isDirectory() ? "/" : ""))
                             }
                         })
@@ -839,9 +876,9 @@ Page({
                 title: 'unmzip...',
                 mask: true//防止触摸
             })
-            const lineArr=app.data.mfile.readFile(mzipPath).split("\r\n")
-            lineArr.map((lineConter,i) => {
-                this.uploadProgress(lineArr.length,i)
+            const lineArr = app.data.mfile.readFile(mzipPath).split("\r\n")
+            lineArr.map((lineConter, i) => {
+                this.uploadProgress(lineArr.length, i)
                 //check conter is not null
                 if (lineConter != "") {
                     const tmp = lineConter.split(":")
