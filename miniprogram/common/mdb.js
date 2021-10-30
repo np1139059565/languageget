@@ -131,136 +131,47 @@ function queryLocalData(geo) {
     }
 }
 
-function downloadYunMediaToLocalSync(infos, callback, isShowLoading,upProgressEvent) {
-    const mcallback = (code1) => {
-        if (isShowLoading) {
-            wx.hideLoading()
-        }
-        if (typeof callback == "function") {
-            callback(code1)
-        }
-    }
-    try {
-        if (isShowLoading) {
-            wx.showLoading({
-                title: 'down media...',
-                mask: true//防止触摸
-            })
-        }
-        const dbPath = getDBPath()
-        const mediatypes = queryLocalData({field: {settings: true}}).settings.mediatypes
-        const skcodeArr = Object.keys(infos)
-        var progressCount=0
-        var downloadCount = 0
-        skcodeArr.map(skcode => {
-            const infoData = infos[skcode]
-            for (const mediaType in infoData) {
-                //check info key is media type
-                if (
-                    mediatypes.indexOf(mediaType) >= 0
-                    && typeof infoData[mediaType] == "string"
-                    && infoData[mediaType].trim().length > 0
-                ) {
-                    const mediaPath = getMediaPathByMType(skcode, mediaType, infoData[mediaType], false)
-                    //rm old media
-                    if (MY_FILE.isExist(mediaPath)) {
-                        MY_FILE.rmPath(mediaType)
-                    }
-                //down new media
-                    progressCount+=1
-                    downloadCount += 1
-                    MY_YUN.downloadFileSync(mediaPath.replace(dbPath, "").replace("/media/", "/"),
-                        mediaPath, (code) => {
-                            downloadCount -= 1
-                            if(typeof upProgressEvent=="function"){
-                                var pro=progressCount*0.5+(progressCount-downloadCount)*0.5
-                                upProgressEvent(progressCount,pro)
-                            }
-                            if (downloadCount == 0) {
-                                mcallback(code)
-                            }
-                        }, false)
-                }
-            }
-        })
-        if (skcodeArr.length == 0) {
-            mcallback(true)
-        }
-    } catch (e) {
-        err(e)
-        mcallback(false)
-    }
-}
-
-function downloadSubjectToLocalSync(callback, isShowLoading,upProgressEvent) {
-    queryYunDataSync({}, (code, arr) => {
-        const mcallback = (code1) => {
-            if (typeof callback == "function") {
-                callback(code1)
-            }
-        }
-        try {
-            if (code && arr != null && arr[0] != null) {
-                const datas = arr[0]
-                //write data to local file by field
-                Object.keys(datas).map((field,i)=>{
-                    if(typeof upProgressEvent=="function"){
-                        upProgressEvent(Object.keys(datas).length,i*0.5)
-                    }
-                    const wcode = MY_FILE.writeFile(getSubjectPath() + field, JSON.stringify(datas[field]))
-                    if (!wcode) {
-                        code = false
-                        err("write data is err", field)
-                    }
-                })
-                //download yun media
-                downloadYunMediaToLocalSync(datas.infos, callback, isShowLoading,upProgressEvent)
-            } else {
-                err("read yun data is err")
-                mcallback(false)
-            }
-        } catch (e) {
-            err(e)
-            mcallback(false)
-        }
-    }, isShowLoading)
-}
-
 function switchSubjectByYunSync(callback, isShowLoading,upProgressEvent) {
     //get all subject
     queryYunDataSync({field: {_id: true, subject: true}}, (code, arr) => {
         const mcallback = (code) => {
             if (typeof callback == "function") {
-                callback(code != null ? code : (THIS_SUBJECT_ID != null))
+                callback(code)
             }
         }
         try {
             if (code) {
                 if (arr.length == 0) {
                     err("subject arr length is 0.")
-                    mcallback()
+                    mcallback(false)
                 } else {
                     //selected subject
                     _SHOWACTIONSHEET(arr.map(o => o.subject), (sval, sindex) => {
                         const downloadYunSubjectCallback = () => {
-                            //switch this subjectid
-                            if (THIS_SUBJECT_ID != arr[sindex]._id) {
-                                THIS_SUBJECT_ID = arr[sindex]._id
-                                info("switch subjectid", THIS_SUBJECT_ID)
+                            try{
+                                //switch this subjectid
+                                if (THIS_SUBJECT_ID != arr[sindex]._id) {
+                                    THIS_SUBJECT_ID = arr[sindex]._id
+                                    info("switch subjectid", THIS_SUBJECT_ID)
+                                }
+                                //clean cache
+                                THIS_SUBJECT_CACHE = {}
+                                //clean local data...
+                                const subjectPath = getSubjectPath()
+                                if (MY_FILE.isExist(subjectPath)) {
+                                    MY_FILE.rmPath(subjectPath)
+                                }
+                                MY_FILE.mkDir(subjectPath)
+                                //download yun subject to local
+                                downloadYunSubjectToLocalSync(callback, isShowLoading,upProgressEvent)
+                            }catch (e){
+                                err(e)
+                                mcallback(false)
                             }
-                            //clean cache
-                            THIS_SUBJECT_CACHE = {}
-                            //clean local data...
-                            const subjectPath = getSubjectPath()
-                            if (MY_FILE.isExist(subjectPath)) {
-                                MY_FILE.rmPath(subjectPath)
-                            }
-                            MY_FILE.mkDir(subjectPath)
-                            //download yun subject to local
-                            downloadSubjectToLocalSync(callback, isShowLoading,upProgressEvent)
                         }
                         if (localSubjectIdArr.indexOf(arr[sindex]._id) >= 0) {
                             _SHOWMODAL("cover local subject?", downloadYunSubjectCallback, () => {
+                                mcallback(false)
                             })
                         } else {
                             downloadYunSubjectCallback()
@@ -268,11 +179,11 @@ function switchSubjectByYunSync(callback, isShowLoading,upProgressEvent) {
                     }, mcallback)
                 }
             } else {
-                mcallback()
+                mcallback(false)
             }
         } catch (e) {
             err(e)
-            mcallback()
+            mcallback(false)
         }
     }, isShowLoading, true)
 }
@@ -712,6 +623,107 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading,upProgr
         err(e)
         mcallback(false)
     }
+}
+function downloadYunMediaToLocalSync(infos, callback, isShowLoading,upProgressEvent) {
+    const mcallback = (code1) => {
+        if (isShowLoading) {
+            wx.hideLoading()
+        }
+        if (typeof callback == "function") {
+            callback(code1)
+        }
+    }
+    try {
+        if (isShowLoading) {
+            wx.showLoading({
+                title: 'down media...',
+                mask: true//防止触摸
+            })
+        }
+        const dbPath = getDBPath()
+        const mediatypes = queryLocalData({field: {settings: true}}).settings.mediatypes
+        const skcodeArr = Object.keys(infos)
+        var progressCount=0
+        var downloadCount = 0
+        skcodeArr.map(skcode => {
+            const infoData = infos[skcode]
+            for (const mediaType in infoData) {
+                //check info key is media type
+                if (
+                    mediatypes.indexOf(mediaType) >= 0
+                    && typeof infoData[mediaType] == "string"
+                    && infoData[mediaType].trim().length > 0
+                ) {
+                    const mediaPath = getMediaPathByMType(skcode, mediaType, infoData[mediaType], false)
+                    //rm old media
+                    if (MY_FILE.isExist(mediaPath)) {
+                        MY_FILE.rmPath(mediaType)
+                    }
+                    //down new media
+                    progressCount+=1
+                    downloadCount += 1
+                    MY_YUN.downloadFileSync(mediaPath.replace(dbPath, "").replace("/media/", "/"),
+                        mediaPath, (code) => {
+                            downloadCount -= 1
+                            if(typeof upProgressEvent=="function"){
+                                var pro=progressCount*0.5+(progressCount-downloadCount)*0.5
+                                upProgressEvent(progressCount,pro)
+                            }
+                            if (downloadCount == 0) {
+                                mcallback(code)
+                            }
+                        }, false)
+                }
+            }
+        })
+        if (skcodeArr.length == 0) {
+            mcallback(true)
+        }
+    } catch (e) {
+        err(e)
+        mcallback(false)
+    }
+}
+function downloadYunSubjectToLocalSync(callback, isShowLoading,upProgressEvent) {
+    //query subject arr
+    queryYunDataSync({}, (code, arr) => {
+        const mcallback = (code1) => {
+            if (typeof callback == "function") {
+                callback(code1)
+            }
+        }
+        try {
+            if (code && arr != null && arr[0] != null) {
+                const newSubjectObj = arr[0]
+                //write data to local file by field
+                Object.keys(newSubjectObj).map((field,i)=>{
+                    //up progress
+                    if(typeof upProgressEvent=="function"){
+                        upProgressEvent(Object.keys(newSubjectObj).length,i*0.5)
+                    }
+                    //write field
+                    const wcode = MY_FILE.writeFile(getSubjectPath() + field, JSON.stringify(newSubjectObj[field]))
+                    if (!wcode) {
+                        code = false
+                        err("write data is err", field)
+                    }
+                })
+                //check all write is ok
+                if(code){
+                    //download yun media
+                    downloadYunMediaToLocalSync(newSubjectObj.infos, callback, isShowLoading,upProgressEvent)
+                }else{
+                    mcallback(false)
+                }
+            } else {
+                err("read yun data is err")
+                mcallback(false)
+            }
+        } catch (e) {
+            err(e)
+            mcallback(false)
+        }
+    }, isShowLoading)
 }
 
 // ------------------open event----------------------
