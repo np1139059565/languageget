@@ -73,16 +73,16 @@ Page({
         try{
             //up pro
             this.data.dProgress.pro=(p/total*100)
-            //>0 show
-            if(this.data.dProgress.pro>0){
+            //0<=pro<100 show
+            if(this.data.dProgress.pro>=0&&this.data.dProgress.pro<100){
                 this.data.dProgress.isShow=true
-                //>100 hide
-                if(this.data.dProgress.pro>=100){
-                    this.data.dProgress.isShow=false
-                }
+            }else{
+                this.data.dProgress.isShow=false
             }
             this.setData(this.data)
         }catch (e){
+            this.data.dProgress.isShow=false
+            this.setData(this.data)
             app.data.mlog.err(e)
         }
     },
