@@ -38,13 +38,13 @@ Page({
                     evData: ["5", "20", "40", "80", "5000"],
                     style: "padding:0 5vw"
                 },
-                first: {text: "first", ev: "tableToPage", evData: -999},
-                pri: {text: "pri", ev: "tableToPage", evData: -1},
+                first: {text: "首页", ev: "tableToPage", evData: -999},
+                pri: {text: "上一页", ev: "tableToPage", evData: -1},
                 thisPage: {text: 1, ev: "tableToPage", type: "input", inputType: "number", style: "text-align:right"},
                 sp: {text: "/"},
                 maxPage: {text: 1},
-                next: {text: "next", ev: "tableToPage", evData: 1},
-                last: {text: "last", ev: "tableToPage", evData: 999},
+                next: {text: "下一页", ev: "tableToPage", evData: 1},
+                last: {text: "尾页", ev: "tableToPage", evData: 999},
             },
             editInfo: {
                 isShow: false,
