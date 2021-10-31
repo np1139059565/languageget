@@ -554,32 +554,6 @@ Page({
             app.data.mlog.err(e1)
         }
     },
-    errTip:function (){
-        try{
-            const infoData=app.data.mdb.query1({field: {infos: true}}).infos[this.data.dAnswer.skcode]
-            if(this.data.dAnswer.text!=null){
-                if(infoData.spelling!=null){
-                    //tip by spelling
-                    const spelling=infoData.spelling.split(",").join("+")
-                    if(this.data.dAnswer.text!=spelling){
-                        this.data.dAnswer.text=spelling
-                    }
-                }
-            }else if(this.data.dAnswer.imgPath.endsWith("voice.svg")){
-                //tip by skey
-                this.data.dAnswer.text=infoData[SETTINGS.learnkey]
-            }else {
-                //tip by img
-                const mediaPath=app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode,"image",infoData["image"])
-                if(mediaPath!=null){
-                    this.data.dAnswer.imgPath=mediaPath
-                }
-            }
-            this.setData(this.data)
-        }catch (e) {
-            app.data.mlog.err(e)
-        }
-    },
     checkEdit: function (e) {
         try {
             var i = e.currentTarget.dataset.event1Data1
@@ -627,6 +601,32 @@ Page({
             }
         } catch (e1) {
             app.data.mlog.err(e1)
+        }
+    },
+    errTip:function (){
+        try{
+            const infoData=app.data.mdb.query1({field: {infos: true}}).infos[this.data.dAnswer.skcode]
+            if(this.data.dAnswer.text!=null){
+                if(infoData.spelling!=null){
+                    //tip by spelling
+                    const spelling=infoData.spelling.split(",").join("+")
+                    if(this.data.dAnswer.text!=spelling){
+                        this.data.dAnswer.text=spelling
+                    }
+                }
+            }else if(this.data.dAnswer.imgPath.endsWith("voice.svg")){
+                //tip by skey
+                this.data.dAnswer.text=infoData[SETTINGS.learnkey]
+            }else {
+                //tip by img
+                const mediaPath=app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode,"image",infoData["image"])
+                if(mediaPath!=null){
+                    this.data.dAnswer.imgPath=mediaPath
+                }
+            }
+            this.setData(this.data)
+        }catch (e) {
+            app.data.mlog.err(e)
         }
     },
     hideMask: function () {

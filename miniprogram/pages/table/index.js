@@ -1038,7 +1038,7 @@ Page({
                 if (app.data.mfile.isExist(voicePath) == false || lineInfo[langType] != lineInfo.inputInfo[langType].text) {
                     this.downMP3ByTTSSync(skey, lineInfo.inputInfo[langType].text, langType, voicePath,
                         isShowLoading, (dcode) => {
-                            app.data.mlog.info("auto download voice by tts is " + dcode)
+                            app.data.mlog[dcode?"info":"err"]("auto download voice by tts is " + dcode)
                         })
                 }
             })
