@@ -405,7 +405,7 @@ Page({
                 //check spelling is null
                 var srcType = viewType2[0]
                 const srcVal = infos[skcode][srcType]
-                if (typeof srcVal == "string" && srcVal.trim() > 0) {
+                if (typeof srcVal == "string" && srcVal.trim().length > 0) {
 
                 } else {
                     srcType = SETTINGS.learnkey2
