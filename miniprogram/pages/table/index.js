@@ -288,7 +288,7 @@ Page({
     showLineMenus: function (e) {
         try {
             const lineIndex = e.currentTarget.dataset.event1Data1
-            const optionArr = ["remove", "trend", "check null voice", "en-image", "image-en", "image-edi", "image-edit"]
+            const optionArr = ["remove", "trend", "check null voice", "spelling-en","en-image", "image-en", "image-edi", "image-edit"]
             //编辑状态下才能save，但是不能add,edit
             if (this.data.dTable.editInfo.index >= 0) {
                 if (lineIndex == this.data.dTable.editInfo.index) {
@@ -338,6 +338,9 @@ Page({
                         break;
                     case "check null voice":
                         this.checkNullVoiceByTTS()
+                        break;
+                    case "spelling-en":
+                        app.openPage(null, "/pages/learn/index?skey=" + skey + "&viewType1=ps&viewType2=en")
                         break;
                     case "en-image":
                         app.openPage(null, "/pages/learn/index?skey=" + skey + "&viewType1=en&viewType2=image")
