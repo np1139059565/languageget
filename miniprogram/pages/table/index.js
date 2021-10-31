@@ -13,7 +13,7 @@ Page({
         },
         dButtons: {
             loopPlay: {
-                text: "loopPlay",
+                text: "循环播放",
                 ev: "loopPlay",
                 style: ""
             }
@@ -39,11 +39,11 @@ Page({
                     style: "padding:0 5vw"
                 },
                 first: {text: "首页", ev: "tableToPage", evData: -999},
-                pri: {text: "上一页", ev: "tableToPage", evData: -1},
+                pri: {text: "上", ev: "tableToPage", evData: -1},
                 thisPage: {text: 1, ev: "tableToPage", type: "input", inputType: "number", style: "text-align:right"},
                 sp: {text: "/"},
                 maxPage: {text: 1},
-                next: {text: "下一页", ev: "tableToPage", evData: 1},
+                next: {text: "下", ev: "tableToPage", evData: 1},
                 last: {text: "尾页", ev: "tableToPage", evData: 999},
             },
             editInfo: {
@@ -645,6 +645,12 @@ Page({
                 if (keys.indexOf(skey)<0) {
                     const skcode = app.enUnicode(skey)
                     VOICE_TYPE_ARR.map(voiceType => {
+                        const upSubjectCallback=()=>{
+                            //up subject
+                            app.data.mdb.update1({
+                                infos: {[app.enUnicode(skey)]: {[langType + "voice"]: SUFFIX}}
+                            })
+                        }
                         const SUFFIX="mp3"
                         const voicePath = app.data.mdb.getMediaPathByMType(skcode, voiceType, SUFFIX, false)
                         //check voice file is not find
@@ -654,15 +660,15 @@ Page({
                                 if (gcode) {
                                     app.data.mfile.downUrlFileSync(vurl, voicePath, (dcode) => {
                                         if (dcode) {
-                                            //up subject
-                                            app.data.mdb.update1({
-                                                infos: {[app.enUnicode(skey)]: {[langType + "voice"]: SUFFIX}}
-                                            })
+                                            upSubjectCallback()
                                             this.tableUpdata()
                                         }
                                     })
                                 }
                             },false)
+                        }else if(!(typeof lineInfo[voiceType]=="string"&&lineInfo[voiceType].trim()!="")){
+                            app.data.mlog.err("cover voice!!",voicePath)
+                            upSubjectCallback()
                         }
                     })
                 }
@@ -696,7 +702,7 @@ Page({
             const langType = tmp[1].split("voice")[0]
             const voicePath = app.data.mdb.getMediaPathByMType(skcode, tmp[1], "mp3", false)
             //use selected get type
-            app.showActionSheet(["合成语音", "选择音频文件","通过URL下载"], (sval,i) => {
+            app.showActionSheet(["选择音频文件", "合成语音","通过URL下载"], (sval,i) => {
                 switch (i) {
                     case 0:
                         this.copyVoiceBySelected(skey, langType)

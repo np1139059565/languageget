@@ -124,7 +124,7 @@ App({
                     itemList.push(itemListBak[i]);
                 }
                 if (5 * page < itemListBak.length) {
-                    itemList.push('next');
+                    itemList.push('下一页');
                 }
                 config.itemList = itemList;
                 wx.showActionSheet(config);

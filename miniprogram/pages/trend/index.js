@@ -10,17 +10,17 @@ Page({
         dButtons: {
             // switchSubject: {text: "subject", ev: "switchSubjectSync1"},
             learn: {
-                text: "learn",
+                text: "开始学习",
                 ev: "openPage",
                 evData: "/pages/learn/index",style:""
             },
             apple: {
-                text: "apple",
+                text: "捡苹果",
                 ev: "openPage",
                 evData: "/pages/apple/index",style:""
             },
             setting: {
-                text: "setting",
+                text: "设置",
                 ev: "openPage",
                 evData: "/pages/setting/index",
                 style:""
@@ -121,7 +121,7 @@ Page({
             if(this.data.dTrend.skeyArr.length>0){
                 this.data.dButtons.setting.text=""
             }else{
-                this.data.dButtons.setting.text="setting"
+                this.data.dButtons.setting.text="设置"
             }
             this.setData(this.data)
         } catch (e) {

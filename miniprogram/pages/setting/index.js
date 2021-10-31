@@ -20,7 +20,7 @@ Page({
                     tdArr: [
                         {
                             type: "button",
-                            text: "table",
+                            text: "列表",
                             ev: "openPage",
                             evData: "/pages/table/index",
                         },
@@ -113,9 +113,9 @@ Page({
             if(tdInfo!=null&&tdInfo.type!="input"){
                 //show menu
                 app.showActionSheet([
-                    "remove",
-                    "edit",
-                    "download",
+                    "删除",
+                    "修改",
+                    "下载",
                     ///ttttttttttt
                     // "upload"
                 ], (sval,sindex) => {
@@ -173,7 +173,7 @@ Page({
         try {
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.text == "table")[0].type = "button"//open table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.text == "列表")[0].type = "button"//open table button
                     //refush title
                     wx.setNavigationBarTitle({
                         title: app.data.mdb.query1({field: {subject: true}}).subject
@@ -191,7 +191,7 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 } else if (app.data.mdb.getSubjectId() == null) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.text == "table")[0].type = ""//close table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.text == "列表")[0].type = ""//close table button
                     wx.setNavigationBarTitle({
                         title: "settings"
                     })
