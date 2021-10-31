@@ -12,9 +12,12 @@ App({
         try {
             //init log
             console.info("init mlog...")
-            this.data.mlog.init1(null, (str1,str2,str3,str4)=>{
-                this.showModal(str1+str2+str3+str4)
-            })
+            this.data.mlog.init1(
+            //     null,
+            //     (str1,str2,str3,str4)=>{
+            //     this.showModal(str1+str2+str3+str4)
+            // }
+            )
             try {
                 this.data.mlog.info("init common events...")
                 this.data.mfile.init1(this.data.mlog)
@@ -40,8 +43,8 @@ App({
             // title: conter,//titile 无换行
             content:conter,
             showCancel: typeof cancelcallback == "function",
-            confirmText: "ok",
-            cancelText: "cancel",
+            confirmText: "确认",
+            cancelText: "取消",
             success: (res) => {
                 try {
                     if (res.confirm) {

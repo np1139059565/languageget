@@ -453,10 +453,10 @@ Page({
 
             //check is null
             if (inputSkeyArr.filter(skey => skey.trim() == "").length > 0) {
-                app.showModal("skey is not \"\"!!")
+                app.showModal("单词不能为空!!")
             } else {
                 const addNew = (callback) => {
-                    app.showModal("add " + (inputSkeyArr.map((skey, i) => {
+                    app.showModal("确认新增 " + (inputSkeyArr.map((skey, i) => {
                         var msg = ""
                         if (coverArr.indexOf(skey) < 0) {
                             msg = "'" + skey
@@ -513,7 +513,7 @@ Page({
                         return msg
                     })).filter(msg => msg != "")
                     if (msgArr.length > 0) {
-                        app.showModal("re " + msgArr.join(";") + "?", () => {
+                        app.showModal("确认修改 " + msgArr.join(";") + "?", () => {
                             wx.showLoading({
                                 title: 're...',
                                 mask: true//防止触摸
@@ -539,7 +539,7 @@ Page({
                         }, () => {
                         })
                     } else {
-                        app.showModal("is cover all!")
+                        app.showModal("是否覆盖所有!")
                     }
                 }
                 const mcb = () => {
@@ -578,10 +578,10 @@ Page({
                             try {
                                 if (code) {
                                     const narr = app.data.mfile.readDir(tmpPath)
-                                    app.showModal("re imgs '" + narr.join(","), () => {
+                                    app.showModal("保存 '" + narr.join(","), () => {
                                         //
                                         wx.showLoading({
-                                            title: 're imgs...',
+                                            title: '保存...',
                                             mask: true//防止触摸
                                         })
                                         //clean callback
@@ -604,7 +604,7 @@ Page({
                                         })
                                         this.tableUpdata()
                                         app.data.mfile.rmPath(tmpPath)
-                                        app.showModal("add is end.")
+                                        app.showModal("结束！")
                                         wx.hideLoading()
                                     }, () => {
                                         app.data.mfile.rmPath(tmpPath)
@@ -618,7 +618,7 @@ Page({
                             }
                         })
                     } else {
-                        app.showModal(filePath + " is not zip file")
+                        app.showModal(filePath + " 不是压缩文件zip")
                         app.data.mfile.rmPath(tmpPath)
                     }
                 } catch (e1) {
@@ -728,10 +728,10 @@ Page({
                           infos: {[app.enUnicode(skey)]: {[langType + "voice"]: "mp3"}}
                       })
                   }
-                  app.showModal("download is "+dcode)
+                  app.showModal("下载音频结果："+dcode)
               })
           }else{
-              app.showModal("url is err")
+              app.showModal("路径错误")
           }
       }  catch (e1){
           app.data.mlog.err(e1)
@@ -754,8 +754,7 @@ Page({
                             app.data.mdb.update1({
                                 infos: {[app.enUnicode(skey)]: {[voiceType]: suffix}}
                             })
-                            app.showModal("copy " + res.tempFiles[0].path + " to " + voicePath + " is "
-                                + pcode)
+                            app.showModal("保存音频 " + res.tempFiles[0].path + " 到 " + voicePath + " 结果 " + pcode)
                         })
                     }
                 },
@@ -818,13 +817,15 @@ Page({
             const callback = (imgPath1) => {
                 const imgSuffix = imgPath1.split(".").reverse()[0]
                 const mediaPath = app.data.mdb.getMediaPathByMType(skcode, "image", imgSuffix, false)
+                //copy file
                 if (app.data.mfile.copyFile(imgPath1, mediaPath)) {
+                    //update subject
                     const code = app.data.mdb.update1({infos: {[skcode]: {image: imgSuffix}}})
                     if (isAutoSave != true) {
-                        app.showModal("copy " + imgPath1 + " to " + mediaPath + " is " + code)
+                        app.showModal("保存图片 " + imgPath1 + " 到 " + mediaPath + " 结果： " + code)
                     }
                 } else {
-                    app.showModal("copy " + imgPath1 + " to " + mediaPath + " is err")
+                    app.showModal("保存图片 " + imgPath1 + " 到 " + mediaPath + " 失败")
                 }
                 this.tableUpdata()
             }
@@ -925,9 +926,9 @@ Page({
                     const inputSkey = lineInfo.inputInfo[SETTINGS.learnkey].text.trim()
                     //check skey
                     if (inputSkey == "") {
-                        app.showModal("skey is null!")
+                        app.showModal("单词不能为空!")
                     } else if (inputSkey != lineInfo[SETTINGS.learnkey] && keys.indexOf(inputSkey) >= 0) {
-                        app.showModal("skey is repeat!")
+                        app.showModal("单词重复!")
                     } else if (keys.indexOf(lineInfo[SETTINGS.learnkey]) < 0) {//new skey
                         const addNewLine = () => {
                             //add new line
@@ -937,7 +938,7 @@ Page({
                         if (isAutoClose) {
                             addNewLine()
                         } else {
-                            app.showModal("add " + inputSkey + "?", addNewLine, mcallback)
+                            app.showModal("确认添加新单词 " + inputSkey + "?", addNewLine, mcallback)
                         }
                     } else {
                         const reLine = () => {
@@ -954,7 +955,7 @@ Page({
                         if (isAutoClose) {
                             reLine()
                         } else {
-                            app.showModal("re " + RHStrArr
+                            app.showModal("确认修改 " + RHStrArr
                                 .map(HStr => HStr + ":" + lineInfo[HStr] + ">" + lineInfo.inputInfo[HStr].text + ",") + "?"
                                 , reLine, mcallback)
                         }

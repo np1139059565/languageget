@@ -32,8 +32,7 @@ Page({
                     this.data.dProgress = JSON.parse(pconter)
                     this.dropApple()
                 }else{
-                    app.data.mlog.info("not find progress",pconter)
-                    app.showModal("not find progress,read all?",()=>{})
+                    app.showModal("没有找到单词列表",()=>{})
                 }
             }
             //

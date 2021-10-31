@@ -158,7 +158,7 @@ Page({
                         }
                     }))
             if(newSubjectName!=subjectName){
-                app.showModal("re '"+subjectName+"' to '"+newSubjectName+"'?",()=>{
+                app.showModal("确认修改 '"+subjectName+"' 成 '"+newSubjectName+"'?",()=>{
                     app.data.mfile.writeFile(app.data.mdb.getDBPath() + subjectId + "/subject",JSON.stringify(newSubjectName))
                     this.onLoad()
                 },this.onLoad)
@@ -463,9 +463,9 @@ Page({
             const trIndex = e.currentTarget.dataset.event1Data1.split(";")[1]
             const newHead = this.data.dTrArr[trIndex].tdArr[0].text.trim()
             if (SETTINGS.heads.indexOf(newHead) >= 0) {
-                app.showModal("head is cover!")
+                app.showModal("新增的表头重复!")
             } else if (newHead.length > 0) {
-                app.showModal("add " + newHead + "?", () => {
+                app.showModal("确认新增表头 " + newHead + "?", () => {
                     //save to local
                     app.data.mdb.update1({
                         settings: {
@@ -476,7 +476,7 @@ Page({
                 }, () => {
                 })
             } else {
-                app.showModal("head is not null~")
+                app.showModal("表头不能为空~")
             }
         } catch (e1) {
             app.data.mlog.err(e1)
@@ -484,7 +484,7 @@ Page({
     },
     addFZK2: function () {
         try {
-            app.showModal("add new fzk?", () => {
+            app.showModal("确认新增丰子恺数?", () => {
                 //save to local
                 app.data.mdb.update1({
                     settings: {
@@ -504,7 +504,7 @@ Page({
             const sindex = e.detail.value
             const newInputStr = this.data.dTrArr[trIndex].tdArr[this.data.dTrArr[trIndex].tdArr.length - 1].rangeArr[sindex]
             if (SETTINGS.inputs.indexOf(newInputStr) < 0) {
-                app.showModal("add " + newInputStr + "?", () => {
+                app.showModal("新增可编辑表头 " + newInputStr + "?", () => {
                     //save to local
                     app.data.mdb.update1({
                         settings: {
@@ -515,7 +515,7 @@ Page({
                 }, () => {
                 })
             } else {
-                app.showModal("is cover!")
+                app.showModal("表头重复!")
             }
 
         } catch (e1) {
@@ -531,7 +531,7 @@ Page({
                 dataIndex = parseInt(tmp[2])
             }
             const oldv = SETTINGS[settingk][dataIndex]
-            app.showModal("remove " + JSON.stringify(oldv), () => {
+            app.showModal("确认删除 " + JSON.stringify(oldv)+"?", () => {
                 //save to local
                 app.data.mdb.update1({
                     settings: {
@@ -655,7 +655,7 @@ Page({
             // check is this subject
             if (subjectId == app.data.mdb.getSubjectId()) {
                 const subjectName = app.data.mdb.query1({field: {subject: true}}).subject
-                app.showModal("dowmload " + subjectName + "?", () => {
+                app.showModal("确认下载课本到本地 " + subjectName + "?", () => {
                     const tmpPath = app.data.mfile.getUserDir() + "tmp/"
                     const mzipName = subjectId + ".mzip"
                     try {
@@ -744,8 +744,8 @@ Page({
                                             //end hide loading,progress
                                             wx.hideLoading()
                                             this.uploadProgress(100, 100)
-                                            app.showModal("copy " + subjectName
-                                                + " is " + ccode)
+                                            app.showModal("拷贝 " + subjectName
+                                                + " 结果： " + ccode)
                                             //clean tmp
                                             app.data.mfile.rmPath(tmpPath)
                                             if (ccode) {
@@ -757,7 +757,7 @@ Page({
                                         //check is repeated
                                         const subjectName = app.data.mfile.readFile(tmpPath + subjectId + "/subject")
                                         if (app.data.mfile.isExist(dbPath + subjectId)) {
-                                            app.showModal("subject is repeated, do you cover it?", () => {
+                                            app.showModal("本地已经存在，是否覆盖?", () => {
                                                 app.data.mfile.rmPath(dbPath + subjectId)
                                                 copySubject(subjectName)
                                             }, () => {
@@ -768,7 +768,7 @@ Page({
                                         }
                                     } else {
                                         app.data.mfile.rmPath(tmpPath)
-                                        app.showModal("file is not subject zip")
+                                        app.showModal("找不到课本id！")
                                     }
                                 } else {
                                     app.data.mfile.rmPath(tmpPath)
@@ -779,7 +779,7 @@ Page({
                             }
                         })
                     } else {
-                        app.showModal(filePath + " is not mzip")
+                        app.showModal("不是正经课本！")
                     }
                 } catch (e1) {
                     app.data.mfile.rmPath(tmpPath)
@@ -794,7 +794,7 @@ Page({
     removeSubject: function (subjectId) {
         try {
             // const subjectId = e.currentTarget.dataset.event1Data1
-            app.showModal("remove " + subjectId + "?", () => {
+            app.showModal("确认删除 " + subjectId + "?", () => {
                 try {
                     if (app.data.mfile.rmPath(app.data.mdb.getDBPath() + subjectId)) {
                         app.data.mdb.switchSubjectSync(this.onLoad, false, true)
@@ -810,9 +810,9 @@ Page({
     },
     uploadSubjectToYun: function (subjectId) {
         try {
-            app.showModal("upload subject to yun?", () => {
+            app.showModal("上传课本到云?", () => {
                 app.data.mdb.uploadLocalSubjectToYunSync(subjectId, (code) => {
-                    app.showModal("upload local subject to yun is " + code)
+                    app.showModal("上传课本到云的结果： " + code)
                 }, true, this.uploadProgress)
             }, () => {
             })

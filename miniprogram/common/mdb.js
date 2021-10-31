@@ -170,7 +170,7 @@ function switchSubjectByYunSync(callback, isShowLoading,upProgressEvent) {
                             }
                         }
                         if (localSubjectIdArr.indexOf(arr[sindex]._id) >= 0) {
-                            _SHOWMODAL("cover local subject?", downloadYunSubjectCallback, () => {
+                            _SHOWMODAL("本地已经存在，是否覆盖?", downloadYunSubjectCallback, () => {
                                 mcallback(false)
                             })
                         } else {
@@ -603,7 +603,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading,upProgr
                         if (upFailArr.length == 0) {
                             mcallback(true)
                         } else {
-                            _SHOWMODAL("re upload?" + upFailArr.join(","), () => {
+                            _SHOWMODAL("是否需要重新上传?" + upFailArr.join(","), () => {
                                 uploadLocalMediaToYunSync(upFailArr, callback, isShowLoading)
                             }, () => {
                                 mcallback(false)

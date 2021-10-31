@@ -71,10 +71,9 @@ Page({
         try {
             const editFilePath=this.data.absolutePath+this.data.editFileName
             if(app.data.mfile.isExist(editFilePath)){
-                app.showModal("save?",()=>{
-                    if(app.data.mfile.writeFile(editFilePath,this.data.editConter.replaceAll(" "," "))){
-                        app.showModal("save is success")
-                    }
+                app.showModal("保存?",()=>{
+                    const wcode=app.data.mfile.writeFile(editFilePath,this.data.editConter.replaceAll(" "," "))
+                    app.showModal("保存文件结果："+wcode)
                 },()=>{
                     //刷新文件内容
                     // this.editFile()
@@ -131,7 +130,7 @@ Page({
                                 this.editFile()
                             }
                             if (stat.size > 1024) {
-                                app.showModal("file size is loog,open?", callback, () => {})
+                                app.showModal("文件过大，任然打开?", callback, () => {})
                             } else callback()
                         }
                     }
@@ -144,7 +143,7 @@ Page({
     removeChild: function (e) {
         try {
             const fPath = this.data.absolutePath + e.currentTarget.dataset.event1Data1
-            app.showModal("remove file " + fPath + "?", () => {
+            app.showModal("确定删除 " + fPath + "?", () => {
                 if (app.data.mfile.rmPath(fPath)) {
                     this.refushDir()
                 }

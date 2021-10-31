@@ -188,7 +188,7 @@ Page({
 
                     // 提示新单词太少
                     if (count0IArr.length < SETTINGS.jobLength ) {
-                        app.showModal("Too few new words")
+                        app.showModal("新单词太少，需要补充！")
                     }
                     //get iarr
                     const IArr2Arr = []//[[1,2,3],[2,3,4]]
@@ -343,7 +343,7 @@ Page({
             } else {
                 const randomTo=()=>{
                     //三期复习结束,进入随机学习模式,不会记录分数
-                    app.showModal(msg + " random to?", () => {
+                    app.showModal(msg + " 是否随机读取进度?", () => {
                         this.data.dProgress.thisProgress = parseInt(Math.random() * skeyIArr.length)
                         this.setData(this.data)
                         this.next1()
@@ -353,7 +353,7 @@ Page({
                 progress = -1
                 const msg = "is end."
                 if (this.data.dProgress.reviewSIArr.length > 0) {
-                    app.showModal(msg + " to review?", () => {
+                    app.showModal(msg + " 是否继续复习?", () => {
                         this.refushProgress(true)
                         this.next1()
                     }, () => {})
