@@ -61,7 +61,7 @@ Page({
             count: 0,
             skcode: "145653",
             // text:"a",
-            ev: "playVoice",
+            ev: "clickPlayVoice",
             ev2: "toTablePage",
             imgPath: "/images/inull.jpg"
         },
@@ -157,7 +157,7 @@ Page({
                     app.data.mlog.info("new review arr", newReviewArr)
                 } else if (tday != this.data.dProgress.time) {
                     wx.showLoading({
-                        title: 'new progress...',
+                        title: '生成新的进度条...',
                         mask: true//防止触摸
                     })
                     //clean
@@ -494,7 +494,7 @@ Page({
                 modeInfo.imgPath = mediaPath != null ? mediaPath : "/images/inull.jpg"
             } else if (SETTINGS.voicetypes.indexOf(viewType) >= 0) {
                 modeInfo.imgPath = "/images/" + (mediaPath != null ? "voice.svg" : "vnull.svg")
-                modeInfo.ev = "playVoice"
+                modeInfo.ev = "clickPlayVoice"
                 modeInfo.evData = mediaPath
             } else {
                 modeInfo.text = infoData[viewType]
@@ -655,7 +655,7 @@ Page({
             app.data.mlog.err(e)
         }
     },
-    playVoice: function (e) {
+    clickPlayVoice: function (e) {
         try {
             if (e.currentTarget.dataset.event1Data1 != null) {
                 app.data.mvoice.playSync(e.currentTarget.dataset.event1Data1)

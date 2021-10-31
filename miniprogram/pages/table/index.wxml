@@ -44,10 +44,10 @@
             </view>
         </view>
     </view>
-<!--    long add-->
-    <view hidden="{{dLongAdd.isShow==false}}" class="c-mask">
+<!--    dialog-->
+    <view hidden="{{DDialog.isShow==false}}" class="c-mask">
         <view class="c-longadd">
-            <view class="c-l-tr" wx:for="{{dLongAdd.inputs}}">
+            <view class="c-l-tr" wx:for="{{DDialog.inputs}}">
                 <view class="c-l-td c-tip">{{item.tip}}:</view>
                 <input value="{{item.inputStr}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
                        maxlength="99999" class="c-l-td c-l-input"/>
@@ -58,14 +58,14 @@
             </view>
             <view class="c-l-tr">
                 <view class="c-l-td">
-                    <button catchtap="{{dLongAdd.cancel.ev}}" data-event1-data1="{{dLongAdd.cancel.evData}}"
+                    <button catchtap="{{DDialog.cancel.ev}}" data-event1-data1="{{DDialog.cancel.evData}}"
                             type="default" plain="true"
-                            class="c-l-button" style="float:left">{{dLongAdd.cancel.text}}</button>
+                            class="c-l-button" style="float:left">{{DDialog.cancel.text}}</button>
                 </view>
                 <view class="c-l-td">
-                    <button catchtap="{{dLongAdd.ok.ev}}" data-event1-data1="{{dLongAdd.ok.evData}}"
+                    <button catchtap="{{DDialog.ok.ev}}" data-event1-data1="{{DDialog.ok.evData}}"
                             type="default" plain="true"
-                            class="c-l-button" style="float:right">{{dLongAdd.ok.text}}</button>
+                            class="c-l-button" style="float:right">{{DDialog.ok.text}}</button>
                 </view>
             </view>
         </view>

@@ -443,7 +443,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
         //create subject
         if (isShowLoading) {
             wx.showLoading({
-                title: 'checkSubject...',
+                title: '检查单词本...',
                 mask: true//防止触摸
             })
         }
@@ -496,7 +496,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
         if (isShowLoading) {
             wx.hideLoading()
             wx.showLoading({
-                title: 'upSubject...',
+                title: '上传单词本...',
                 mask: true//防止触摸
             })
         }
@@ -512,7 +512,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
                     if (isShowLoading) {
                         wx.hideLoading()
                         wx.showLoading({
-                            title: 'delYMedia...',
+                            title: '删除媒体...',
                             mask: true//防止触摸
                         })
                     }
@@ -527,7 +527,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
                                 if (isShowLoading) {
                                     wx.hideLoading()
                                     wx.showLoading({
-                                        title: 'findMedia...',
+                                        title: '查找媒体...',
                                         mask: true//防止触摸
                                     })
                                 }
@@ -576,7 +576,7 @@ function uploadLocalMediaToYunSync(mediaPathArr, callback, isShowLoading,upProgr
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'upMedia...',
+                title: '上传媒体...',
                 mask: true//防止触摸
             })
         }
@@ -636,7 +636,7 @@ function downloadYunMediaToLocalSync(infos, callback, isShowLoading,upProgressEv
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'down media...',
+                title: '下载媒体...',
                 mask: true//防止触摸
             })
         }

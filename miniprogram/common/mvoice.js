@@ -49,7 +49,7 @@ function downloadVoiceByTTSSync(text, langType, callback,isShowLoading) {
     try{
         if(isShowLoading){
             wx.showLoading({
-                title: 'tts...',
+                title: '合成语音...',
                 mask: true//防止触摸
             })
         }

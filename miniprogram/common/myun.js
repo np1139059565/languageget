@@ -41,7 +41,7 @@ function yunSync1(eventName, data, callback,isShowLoading) {
         if (yunAbility) {
             if(isShowLoading){
                 wx.showLoading({
-                    title: 'yun...',
+                    title: '云...',
                     mask: true//防止触摸
                 })
             }
@@ -105,7 +105,7 @@ function downloadFileSync(yunPath,localPath,callback,isShowLoading){
     try{
         if(isShowLoading){
             wx.showLoading({
-                title: 'downYFile...',
+                title: '下载云文件...',
                 mask: true//防止触摸
             })
         }
@@ -162,7 +162,7 @@ function uploadFileSync(localPath,yunPath,callback,isShowLoading){
     try{
         if(isShowLoading){
             wx.showLoading({
-                title: 'uploadYFile...',
+                title: '上传文件到云...',
                 mask: true//防止触摸
             })
         }
@@ -206,7 +206,7 @@ function delFileSync(yunPathArr,callback,isShowLoading){
     try{
         if(isShowLoading){
             wx.showLoading({
-                title: 'delYFile...',
+                title: '删除云文件...',
                 mask: true//防止触摸
             })
         }

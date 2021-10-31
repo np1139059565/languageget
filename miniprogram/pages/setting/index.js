@@ -113,26 +113,26 @@ Page({
             if(tdInfo!=null&&tdInfo.type!="input"){
                 //show menu
                 app.showActionSheet([
-                    ///ttttttttttt
-                    // "upload",
                     "remove",
                     "edit",
-                    "download"
-                ], (sval) => {
-                    switch (sval) {
-                        case "upload":
-                            this.uploadSubjectToYun(subjectId)
-                            break;
-                        case "remove":
+                    "download",
+                    ///ttttttttttt
+                    // "upload"
+                ], (sval,sindex) => {
+                    switch (sindex) {
+                        case 0:
                             this.removeSubject(subjectId)
                             break;
-                        case "edit":
+                        case 1:
                             //open edit
                             tdInfo.type = "input"
                             this.setData(this.data)
                             break;
-                        case "download":
+                        case 2:
                             this.downLocalSubject(subjectId)
+                            break;
+                        case 3:
+                            this.uploadSubjectToYun(subjectId)
                             break;
                     }
                 })
@@ -736,7 +736,7 @@ Page({
                                     if (app.data.mfile.isExist(idPath) && JSON.parse(app.data.mfile.readFile(idPath)) == subjectId) {
                                         const copySubject = (subjectName) => {
                                             wx.showLoading({
-                                                title: 'copy...',
+                                                title: '拷贝...',
                                                 mask: true//防止触摸
                                             })
                                             //copy file
@@ -830,7 +830,7 @@ Page({
     packMZIPSync: function (subjectPath, dstPath, callback, mzipName) {
         try {
             wx.showLoading({
-                title: 'cmzip...',
+                title: '打包...',
                 mask: true//防止触摸
             })
             //check subject path path
@@ -892,7 +892,7 @@ Page({
     unmzipSync: function (mzipPath, dstPath, callback) {
         try {
             wx.showLoading({
-                title: 'unmzip...',
+                title: '解压...',
                 mask: true//防止触摸
             })
             const lineArr = app.data.mfile.readFile(mzipPath).split("\r\n")

@@ -251,7 +251,7 @@ function downUrlFileSync(url, localPath, callback, isShowLoading) {
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'down...',
+                title: '下载...',
                 mask: true//防止触摸
             })
         }
@@ -306,7 +306,7 @@ function unzipSync(zipPath, dstPath, callback, isShowLoading) {
     try {
         if (isShowLoading) {
             wx.showLoading({
-                title: 'unzip...',
+                title: '解压...',
                 mask: true//防止触摸
             })
         }

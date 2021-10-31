@@ -1,5 +1,6 @@
 //index.js
 const app = getApp()
+const SEARCH_ALL="auto"
 var SETTINGS = {}
 var MEDIA_TYPE_ARR = ["image", "zhvoice", "envoice"]
 var VOICE_TYPE_ARR = ["zhvoice", "envoice"]
@@ -34,7 +35,7 @@ Page({
                 pageLength: {
                     text: 10,
                     ev: "tableSwitchPageLength",
-                    evData: ["5", "10", "20", "30", "5000"],
+                    evData: ["5", "20", "40", "80", "5000"],
                     style: "padding:0 5vw"
                 },
                 first: {text: "first", ev: "tableToPage", evData: -999},
@@ -53,15 +54,15 @@ Page({
         playInfo: {
             progress: 0
         },
-        dLongAdd: {
+        DDialog: {
             isShow: false,
             inputs: [],//[{tip:headStr,inputStr:"",ev:"saveInputStr",evData:i}]
             cancel: {
-                text: "cancel",
+                text: "取消",
                 ev: "closeAddLongDialog"
             },
             ok: {
-                text: "ok",
+                text: "确认",
                 ev: "addLongSubmit"
             }
         },
@@ -142,7 +143,7 @@ Page({
     tableUpdata() {
         try {
             wx.showLoading({
-                title: 'load...',
+                title: '加载...',
                 mask: true//防止触摸
             })
             //close edit
@@ -157,7 +158,7 @@ Page({
             const searchRes = Object.keys(infos).filter(kcode => {
                 const infoData = infos[kcode]
                 var filterRes = (searchText == "")
-                if (searchType == "auto") {
+                if (searchType == SEARCH_ALL) {
                     //auto filter all value
                     filterRes = Object.values(infoData).filter(v => typeof v == "string"
                         && (v.indexOf(searchText) >= 0 || v.startsWith(searchText))).length > 0
@@ -249,11 +250,11 @@ Page({
                     //voice
                     if (VOICE_TYPE_ARR.indexOf(headStr) >= 0) {
                         if (skcode != "") {
-                            lineInfo.mediaInfo[headStr].ev2 = "switchLocalVoice"
+                            lineInfo.mediaInfo[headStr].ev2 = "longClickVoiceShowMenu"
                         }
                         if (mediaPath != null) {
                             lineInfo.mediaInfo[headStr].imgPath = "/images/voice.svg"
-                            lineInfo.mediaInfo[headStr].ev = "playVoice"
+                            lineInfo.mediaInfo[headStr].ev = "clickPlayVoice"
                         } else {
                             lineInfo.mediaInfo[headStr].imgPath = "/images/vnull.svg"
                         }
@@ -288,31 +289,31 @@ Page({
     showLineMenus: function (e) {
         try {
             const lineIndex = e.currentTarget.dataset.event1Data1
-            const optionArr = ["remove", "trend", "check null voice", "spelling-en","en-image", "image-en", "image-edi", "image-edit"]
+            const optionArr = ["删除", "趋势图", "检查音频", "spelling-en","en-image", "image-en", "image-edi", "image-edit"]
             //编辑状态下才能save，但是不能add,edit
             if (this.data.dTable.editInfo.index >= 0) {
                 if (lineIndex == this.data.dTable.editInfo.index) {
                     optionArr.splice(0, 1)//正在编辑的不能删除
                 }
-                optionArr.splice(0, 999, "save")
+                optionArr.splice(0, 999, "保存")
             } else {
-                optionArr.splice(0, 0, "add")
-                optionArr.splice(2, 0, "edit")
+                optionArr.splice(0, 0, "新增")
+                optionArr.splice(2, 0, "修改")
             }
             const skey = this.data.dTable.lineArr[lineIndex][SETTINGS.learnkey]
             app.showActionSheet(optionArr, (sval) => {
                 switch (sval) {
-                    case "add":
+                    case "新增":
                         this.showAddMenus()
                         break;
-                    case "remove":
-                        app.showActionSheet([skey, "page"], (sval, sindex) => {
+                    case "删除":
+                        app.showActionSheet([skey, "删除整页"], (sval, sindex) => {
                             if (sindex == 0) {
                                 this.removeLineBySKEY(skey, true)
                                 this.tableUpdata()
                             } else {
                                 wx.showLoading({
-                                    title: 'remove...',
+                                    title: '删除...',
                                     mask: true//防止触摸
                                 })
                                 this.data.dTable.lineArr.map((info1,i) => {
@@ -326,18 +327,18 @@ Page({
                             }
                         })
                         break;
-                    case "edit":
+                    case "修改":
                         this.openLineEdit(lineIndex)
                         break;
-                    case "save":
+                    case "保存":
                         this.closeLineEdit(false, null, true)
                         this.tableUpdata()
                         break;
-                    case "trend":
+                    case "趋势图":
                         app.openPage(null, "/pages/trend/index?skeyArr[0]=" + skey)
                         break;
-                    case "check null voice":
-                        this.checkNullVoiceByTTS()
+                    case "检查音频":
+                        this.thisPageNullVoiceByTTS()
                         break;
                     case "spelling-en":
                         app.openPage(null, "/pages/learn/index?skey=" + skey + "&viewType1=ps&viewType2=en")
@@ -363,12 +364,26 @@ Page({
     },
     showAddMenus: function () {
         try {
-            app.showActionSheet(["one", "long", "for image", "for zip"], (sval) => {
-                switch (sval) {
-                    case "one":
+            app.showActionSheet(["新增一条", "新增多条", "一张图片", "多张图片的ZIP"], (sval,sindex) => {
+                switch (sindex) {
+                    case 0:
                         this.openLineEdit()
                         break;
-                    case "for image":
+                    case 1:
+                        this.data.DDialog.isShow = true
+                        this.data.DDialog.inputs = SETTINGS.inputs.map((headStr, i) => {
+                            return {
+                                tip: headStr,
+                                inputStr: "",
+                                ev: "saveInputStr",
+                                evData: i
+                            }
+                        })
+                        this.data.DDialog.ok.ev="addLongSubmit"
+                        this.setData(this.data)
+                        break;
+
+                    case 2:
                         this.selectImage((imgPath) => {
                             this.data.defLineEditCallback = (code, newSkey) => {
                                 if (code) {
@@ -390,21 +405,8 @@ Page({
                             this.openLineEdit(null, skey, OIInfo)
                         })
                         break;
-                    case "for zip":
+                    case 3:
                         this.addNewLineByZip()
-                        break;
-                    case "long":
-                        this.data.dLongAdd.isShow = true
-                        this.data.dLongAdd.inputs = SETTINGS.inputs.map((headStr, i) => {
-                            return {
-                                tip: headStr,
-                                inputStr: "",
-                                ev: "saveInputStr",
-                                evData: i
-                            }
-                        })
-                        this.data.dLongAdd.ok.ev="addLongSubmit"
-                        this.setData(this.data)
                         break;
                 }
             })
@@ -414,7 +416,7 @@ Page({
     },
     closeAddLongDialog: function () {
         try {
-            this.data.dLongAdd.isShow = false
+            this.data.DDialog.isShow = false
             this.setData(this.data)
         } catch (e1) {
             app.data.mlog.err(e1)
@@ -422,7 +424,7 @@ Page({
     },
     saveInputStr(e) {
         try {
-            this.data.dLongAdd.inputs[e.currentTarget.dataset.event1Data1].inputStr = e.detail.value
+            this.data.DDialog.inputs[e.currentTarget.dataset.event1Data1].inputStr = e.detail.value
             this.setData(this.data)
         } catch (e1) {
             app.data.mlog.err(e1)
@@ -430,24 +432,24 @@ Page({
     },
     addLongSubmit: function () {
         try {
-            const skeyInputIndex = this.data.dLongAdd.inputs.findIndex(inputInfo => inputInfo.tip == SETTINGS.learnkey)
-            const inputSkeyStr = this.data.dLongAdd.inputs[skeyInputIndex].inputStr
+            const skeyInputIndex = this.data.DDialog.inputs.findIndex(inputInfo => inputInfo.tip == SETTINGS.learnkey)
+            const inputSkeyStr = this.data.DDialog.inputs[skeyInputIndex].inputStr
             var inputSkeyArr = inputSkeyStr.split(",")
             //suffix by _
             if (inputSkeyStr.indexOf("_") >= 0 && inputSkeyStr.indexOf("\r\n") >= 0) {
                 inputSkeyStr.split("\r\n").map((tmpStr, i) => {
                     const tmp = tmpStr.split("_")
-                    this.data.dLongAdd.inputs.map((inputInfo, j) => {
+                    this.data.DDialog.inputs.map((inputInfo, j) => {
                         tmp[j]= (tmp[j]!=null?tmp[j]:"")
                         if (i == 0) {
-                            this.data.dLongAdd.inputs[j].inputStr =tmp[j]
+                            this.data.DDialog.inputs[j].inputStr =tmp[j]
                         } else {
-                            this.data.dLongAdd.inputs[j].inputStr += ("," + tmp[j])
+                            this.data.DDialog.inputs[j].inputStr += ("," + tmp[j])
                         }
                     })
                 })
                 this.setData(this.data)
-                inputSkeyArr = this.data.dLongAdd.inputs[skeyInputIndex].inputStr.split(",")
+                inputSkeyArr = this.data.DDialog.inputs[skeyInputIndex].inputStr.split(",")
             }
             const keys = app.data.mdb.query1({field: {keys: true}}).keys
             //check is cover
@@ -463,7 +465,7 @@ Page({
                         var msg = ""
                         if (coverArr.indexOf(skey) < 0) {
                             msg = "'" + skey
-                            this.data.dLongAdd.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
+                            this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                 .map((inputInfo) => {
                                     const inputStrArr = inputInfo.inputStr.split(",")
                                     msg += ("_" + (inputStrArr.length == 1 ? inputStrArr[0] : inputStrArr[i]))
@@ -473,14 +475,14 @@ Page({
                         return msg
                     }).filter(msg => msg != "").join(",")) + "?", () => {
                         wx.showLoading({
-                            title: 'add...',
+                            title: '添加...',
                             mask: true//防止触摸
                         })
                         //add new
                         inputSkeyArr.map((skey, i) => {
                             if (coverArr.indexOf(skey) < 0) {
                                 const otherInputInfo = {}
-                                this.data.dLongAdd.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
+                                this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                     .map(inputInfo => {
                                         const inputArr = inputInfo.inputStr.split(",")
                                         otherInputInfo[inputInfo.tip] = inputArr.length == 1 ? inputArr[0] : inputArr[i]
@@ -502,7 +504,7 @@ Page({
                         var msg = ""
                         if (coverArr.indexOf(skey) >= 0) {
                             const skcode = app.enUnicode(skey)
-                            this.data.dLongAdd.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
+                            this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                 .map((inputInfo) => {
                                     const inputStrArr = inputInfo.inputStr.split(",")
                                     if (typeof inputStrArr[i] == "string" && infos[skcode][inputInfo.tip] != inputStrArr[i]) {
@@ -518,14 +520,14 @@ Page({
                     if (msgArr.length > 0) {
                         app.showModal("确认修改 " + msgArr.join(";") + "?", () => {
                             wx.showLoading({
-                                title: 're...',
+                                title: '修改...',
                                 mask: true//防止触摸
                             })
                             inputSkeyArr.map((skey, i) => {
                                 if (coverArr.indexOf(skey) >= 0) {
                                     const skcode = app.enUnicode(skey)
                                     const otherInputInfo = {}
-                                    this.data.dLongAdd.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
+                                    this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                         .map(inputInfo => {
                                             const inputStrArr = inputInfo.inputStr.split(",")
                                             otherInputInfo[inputInfo.tip] = (typeof inputStrArr[i] == "string" && infos[skcode][inputInfo.tip] != inputStrArr[i] ?
@@ -634,27 +636,42 @@ Page({
             }
         })
     },
-    checkNullVoiceByTTS: function () {
+    thisPageNullVoiceByTTS: function () {
         try {
+            const keys = app.data.mdb.query1({field: {keys: true}}).keys
             this.data.dTable.lineArr.map(lineInfo => {
                 const skey = lineInfo[SETTINGS.learnkey]
-                if (skey != "") {
+                //check skey is not new
+                if (keys.indexOf(skey)<0) {
                     const skcode = app.enUnicode(skey)
                     VOICE_TYPE_ARR.map(voiceType => {
-                        const voicePath = app.data.mdb.getMediaPathByMType(skcode, voiceType, "mp3", false)
+                        const SUFFIX="mp3"
+                        const voicePath = app.data.mdb.getMediaPathByMType(skcode, voiceType, SUFFIX, false)
+                        //check voice file is not find
                         if (app.data.mfile.isExist(voicePath) != true) {
                             const langType = voiceType.toLowerCase().split("voice")[0]
-                            this.downMP3ByTTSSync(skey, lineInfo[langType], langType, voicePath, true)
+                            app.data.mvoice.downloadVoiceByTTSSync(lineInfo[langType], langType, (gcode, vurl) => {
+                                if (gcode) {
+                                    app.data.mfile.downUrlFileSync(vurl, voicePath, (dcode) => {
+                                        if (dcode) {
+                                            //up subject
+                                            app.data.mdb.update1({
+                                                infos: {[app.enUnicode(skey)]: {[langType + "voice"]: SUFFIX}}
+                                            })
+                                            this.tableUpdata()
+                                        }
+                                    })
+                                }
+                            },false)
                         }
                     })
                 }
             })
-            this.tableUpdata()
         } catch (e) {
             app.data.mlog.err(e)
         }
     },
-    playVoice: function (e) {
+    clickPlayVoice: function (e) {
         try {
             //tmp:lineIndex;voiceType
             const tmp = e.currentTarget.dataset.event1Data1.split(";")
@@ -669,7 +686,7 @@ Page({
             app.data.mlog.err(e1)
         }
     },
-    switchLocalVoice: function (e) {
+    longClickVoiceShowMenu: function (e) {
         try {
             //tmp:lineIndex;voiceType
             const tmp = e.currentTarget.dataset.event1Data1.split(";")
@@ -679,28 +696,40 @@ Page({
             const langType = tmp[1].split("voice")[0]
             const voicePath = app.data.mdb.getMediaPathByMType(skcode, tmp[1], "mp3", false)
             //use selected get type
-            app.showActionSheet(["TTS", "SELECT","BY URL"], (sval) => {
-                switch (sval) {
-                    case "SELECT":
-                        this.selectVoice(skey, tmp[1])
+            app.showActionSheet(["合成语音", "选择音频文件","通过URL下载"], (sval,i) => {
+                switch (i) {
+                    case 0:
+                        this.copyVoiceBySelected(skey, langType)
                         break;
-                    case "TTS":
-                        this.downMP3ByTTSSync(skey, infoData[langType], langType, voicePath, null, (dcode) => {
-                            if (dcode) {
-                                app.data.mvoice.playSync(voicePath)
+                    case 1:
+                        //download voice by tts
+                        app.data.mvoice.downloadVoiceByTTSSync(infoData[langType], langType, (tcode, turl) => {
+                            if (tcode) {
+                                this.switchLocalVoinceByPathSync(skey,langType,turl,(scode)=>{
+                                    if(scode){
+                                        app.data.mfile.downUrlFileSync(turl, voicePath,(dcode)=>{
+                                            app.showModal("TTS合成语音结果："+dcode)
+                                        })
+                                    }else{
+                                        app.showModal("音频播放测试失败！")
+                                    }
+                                })
+                            }else{
+                                app.showModal("TTS合成语音失败！")
                             }
-                        })
+                        }, true)
                         break;
-                    case "BY URL":
-                        this.data.dLongAdd.isShow = true
-                        this.data.dLongAdd.inputs = [{
+                    case 2:
+                        //download voice by url
+                        this.data.DDialog.isShow = true
+                        this.data.DDialog.inputs = [{
                             tip: "url",
                             inputStr: "",
                             ev: "saveInputStr",
                             evData: 0
                         }]
-                        this.data.dLongAdd.ok.ev="downloadVoidByUrl"
-                        this.data.dLongAdd.ok.evData=e.currentTarget.dataset.event1Data1
+                        this.data.DDialog.ok.ev="downloadVoidByUrl"
+                        this.data.DDialog.ok.evData=e.currentTarget.dataset.event1Data1
                         this.setData(this.data)
                         break;
                 }
@@ -710,37 +739,69 @@ Page({
             app.data.mlog.err(e1)
         }
     },
+    switchLocalVoinceByPathSync:function(skey,langType,srcPath,callback){
+        const mcallback=(code)=>{
+            if(typeof callback=="function"){
+                callback(code)
+            }
+        }
+        try{
+            app.data.mvoice.playSync(srcPath,(pcode)=>{
+                if(pcode){
+                    //update subject
+                    app.data.mdb.update1({
+                        infos: {[app.enUnicode(skey)]: {[langType + "voice"]: "mp3"}}
+                    })
+                    mcallback(true)
+                }else{
+                    mcallback(false)
+                }
+            })
+        }catch (e){
+            app.data.mlog.err(e)
+            mcallback(false)
+        }
+    },
     downloadVoidByUrl(e){
       try{
-          //tmp:lineIndex;voiceType
-          const tmp = e.currentTarget.dataset.event1Data1.split(";")
-          const skey = this.data.dTable.lineArr[parseInt(tmp[0])][SETTINGS.learnkey]
-          const skcode = app.enUnicode(skey)
-          const langType = tmp[1].split("voice")[0]
-          const voicePath = app.data.mdb.getMediaPathByMType(skcode, tmp[1], "mp3", false)
-          const inpStr=this.data.dLongAdd.inputs[0].inputStr
-          if(typeof inpStr=="string"&&inpStr.trim().startsWith("http")){
-              app.data.mfile.downUrlFileSync(inpStr, voicePath, (dcode) => {
-                  if (dcode) {
-                      //close dialog
-                      this.data.dLongAdd.isShow = false
-                      this.setData(this.data)
-                      //save to local
-                      app.data.mvoice.playSync(voicePath)
-                      app.data.mdb.update1({
-                          infos: {[app.enUnicode(skey)]: {[langType + "voice"]: "mp3"}}
+          //check url
+          const inputUrl=this.data.DDialog.inputs[0].inputStr
+          if(typeof inputUrl=="string"&&inputUrl.trim().startsWith("http")){
+              //play voice test
+              const tmp = e.currentTarget.dataset.event1Data1.split(";")//tmp:lineIndex;voiceType
+              const skey = this.data.dTable.lineArr[parseInt(tmp[0])][SETTINGS.learnkey]
+              const langType = tmp[1].split("voice")[0]
+              this.switchLocalVoinceByPathSync(skey,langType,inputUrl,(scode)=>{
+                  if(scode){
+                      //download voice
+                      const skcode = app.enUnicode(skey)
+                      const voicePath = app.data.mdb.getMediaPathByMType(skcode, tmp[1], "mp3", false)
+                      app.data.mfile.downUrlFileSync(inputUrl, voicePath,(dcode)=>{
+                          app.showModal("通过url下载语音结果："+dcode)
+                          if(dcode){
+                              //close dialog
+                              this.data.DDialog.isShow = false
+                              this.setData(this.data)
+                          }else{
+                              //clean
+                              app.data.mfile.rmPath(voicePath)
+                              app.data.mdb.update1({
+                                  infos: {[app.enUnicode(skey)]: {[langType + "voice"]: ""}}
+                              })
+                          }
                       })
+                  }else{
+                      app.showModal("音频播放测试失败！")
                   }
-                  app.showModal("下载音频结果："+dcode)
               })
           }else{
-              app.showModal("路径错误")
+              app.showModal("路径格式错误")
           }
       }  catch (e1){
           app.data.mlog.err(e1)
       }
     },
-    selectVoice: function (skey, voiceType) {
+    copyVoiceBySelected: function (skey, langType,voicePath) {
         try {
             //select voice file
             wx.chooseMessageFile({
@@ -748,18 +809,15 @@ Page({
                 type: 'file',
                 success: (res) => {
                     // res.tempFiles[0]:{size,path}
-                    const skcode = app.enUnicode(skey)
-                    const suffix = res.tempFiles[0].path.split(".").reverse()[0]
-                    const voicePath = app.data.mdb.getMediaPathByMType(skcode, voiceType, suffix, false)
-                    const ccode = app.data.mfile.copyFile(res.tempFiles[0].path, voicePath)
-                    if (ccode) {
-                        app.data.mvoice.playSync(voicePath, (pcode) => {
-                            app.data.mdb.update1({
-                                infos: {[app.enUnicode(skey)]: {[voiceType]: suffix}}
-                            })
-                            app.showModal("保存音频 " + res.tempFiles[0].path + " 到 " + voicePath + " 结果 " + pcode)
-                        })
-                    }
+                    const spath=res.tempFiles[0].path
+                    this.switchLocalVoinceByPathSync(skey,langType,spath,(scode)=>{
+                        if(scode){
+                            const ccode=app.data.mfile.copyFile(res.tempFiles[0].path, voicePath)
+                            app.showModal("拷贝语音结果："+ccode)
+                        }else{
+                            app.showModal("音频播放测试失败！")
+                        }
+                    })
                 },
                 fail: e1 => {
                     app.data.mlog.err(e1, "select voice is fail.")
@@ -767,32 +825,6 @@ Page({
             })
         } catch (e2) {
             app.data.mlog.err(e2)
-        }
-    },
-    downMP3ByTTSSync(skey, text, langType, voicePath, isShowLoading, callback) {
-        const mcallback = (code) => {
-            if (typeof callback == "function") {
-                callback(code)
-            }
-        }
-        try {
-            app.data.mvoice.downloadVoiceByTTSSync(text, langType, (gcode, vurl) => {
-                if (gcode) {
-                    app.data.mfile.downUrlFileSync(vurl, voicePath, (dcode) => {
-                        if (dcode) {
-                            app.data.mdb.update1({
-                                infos: {[app.enUnicode(skey)]: {[langType + "voice"]: "mp3"}}
-                            })
-                        }
-                        mcallback(dcode)
-                    })
-                } else {
-                    mcallback(gcode)
-                }
-            }, isShowLoading)
-        } catch (e) {
-            app.data.mlog.err(e)
-            mcallback(false)
         }
     },
     selectImage: function (callback) {
@@ -1038,12 +1070,12 @@ Page({
                 const voicePath = app.data.mdb.getMediaPathByMType(skcode, headStr, lineInfo[headStr], false)
                 const langType = headStr.toLowerCase().split("voice")[0]
                 //check voice
-                if (app.data.mfile.isExist(voicePath) == false || lineInfo[langType] != lineInfo.inputInfo[langType].text) {
-                    this.downMP3ByTTSSync(skey, lineInfo.inputInfo[langType].text, langType, voicePath,
-                        isShowLoading, (dcode) => {
-                            app.data.mlog[dcode?"info":"err"]("auto download voice by tts is " + dcode)
-                        })
-                }
+                // if (app.data.mfile.isExist(voicePath) == false || lineInfo[langType] != lineInfo.inputInfo[langType].text) {
+                //     this.downMP3ByTTSSync(skey, lineInfo.inputInfo[langType].text, langType, voicePath,
+                //         isShowLoading, (dcode) => {
+                //             app.data.mlog[dcode?"info":"err"]("auto download voice by tts is " + dcode)
+                //         })
+                // }
             })
         } catch (e) {
             app.data.mlog.err(e)
@@ -1053,7 +1085,7 @@ Page({
         try {
             if (isShowLoading) {
                 wx.showLoading({
-                    title: 'remove...',
+                    title: '删除...',
                     mask: true//防止触摸
                 })
             }
@@ -1130,7 +1162,7 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 }, () => {
-                    this.data.dTable.search.stype.text = "auto"
+                    this.data.dTable.search.stype.text = SEARCH_ALL
                     this.data.dTable.options.thisPage.text = 1
                     this.setData(this.data)
                     this.tableUpdata()

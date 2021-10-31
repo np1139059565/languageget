@@ -205,12 +205,6 @@ Page({
             //open click
             cleanStyle(this.data.dButtons.learn)
             this.data.dButtons.learn.ev="openPage"
-            // cleanStyle(this.data.dButtons.files)
-            // this.data.dButtons.files.ev="openPage"
-            // cleanStyle(this.data.dButtons.table)
-            // this.data.dButtons.table.ev="openPage"
-            // cleanStyle(this.data.dButtons.setting)
-            // this.data.dButtons.setting.ev="openPage"
 
             cleanStyle(this.data.dTrend.dButtons.c)
             this.data.dTrend.dButtons.c.ev="switchDataType"
