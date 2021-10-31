@@ -66,35 +66,35 @@ Page({
             imgPath: "/images/inull.jpg"
         },
         dTools: {
-            pri:{
-                isShow:true,
-                text:"<",
+            pri: {
+                isShow: true,
+                text: "<",
                 // imgPath: "/images/mac1.svg",
                 ev: "clickPri"
             },
             mac: {
                 // text:"play",
-                isShow:false,
+                isShow: false,
                 imgPath: "/images/mac1.svg",
                 ev2: "startRecordVoice",
                 ev3: "stopRecordVoice"
             },
             play: {
                 // text: "play2",
-                isShow:false,
+                isShow: false,
                 imgPath: "/images/voice.svg",
                 ev: "playAnswer",
                 evData: ""
             },
-            next:{
-                isShow:true,
-                text:">",
+            next: {
+                isShow: true,
+                text: ">",
                 // imgPath: "/images/mac1.svg",
                 ev: "clickNext"
             },
-            last:{
-                isShow:true,
-                text:">>",
+            last: {
+                isShow: true,
+                text: ">>",
                 // imgPath: "/images/mac1.svg",
                 ev: "clickLast"
             }
@@ -138,8 +138,8 @@ Page({
                 var pconter = app.data.mfile.readFile(ppath)
                 if (pconter.trim().length > 0) {
                     this.data.dProgress = JSON.parse(pconter)
-                }else{
-                    app.data.mlog.err("progress conter is err",pconter)
+                } else {
+                    app.data.mlog.err("progress conter is err", pconter)
                 }
             }
             //check progress is end
@@ -187,7 +187,7 @@ Page({
                     })
 
                     // 提示新单词太少
-                    if (count0IArr.length < SETTINGS.jobLength ) {
+                    if (count0IArr.length < SETTINGS.jobLength) {
                         app.showModal("新单词太少，需要补充！")
                     }
                     //get iarr
@@ -231,27 +231,29 @@ Page({
                     })
 
                     //新单词不要挤在一起
-                    this.data.dProgress.skeyIArr.map((ski1,i1)=>{
-                        if(i1>0){
-                            const skcode0=app.enUnicode(keys[this.data.dProgress.skeyIArr[i1-1]])
-                            const skcode1=app.enUnicode(keys[ski1])
-                            if(infos[skcode0].c==infos[skcode1].c&&false==(infos[skcode0].c>0)){
-                                for(var i3=this.data.dProgress.skeyIArr.length-1;i3>0;i3--){
-                                    const ski3=this.data.dProgress.skeyIArr[i3]
-                                    const skcode2=app.enUnicode(keys[this.data.dProgress.skeyIArr[i3-1]])
-                                    const skcode3=app.enUnicode(keys[ski3])
-                                    if(ski1>=0&&infos[skcode2].c>0&&infos[skcode3].c>0&&Math.random()>0.5){
-                                        this.data.dProgress.skeyIArr[i1]=this.data.dProgress.skeyIArr[i3]
-                                        this.data.dProgress.skeyIArr[i3]=ski1
-                                        ski1=-1
+                    this.data.dProgress.skeyIArr.map((ski1, i1) => {
+                        if (i1 > 0) {
+                            const skcode0 = app.enUnicode(keys[this.data.dProgress.skeyIArr[i1 - 1]])
+                            const skcode1 = app.enUnicode(keys[ski1])
+                            if (infos[skcode0].c == infos[skcode1].c && false == (infos[skcode0].c > 0)) {
+                                for (var i3 = this.data.dProgress.skeyIArr.length - 1; i3 > 0; i3--) {
+                                    const ski3 = this.data.dProgress.skeyIArr[i3]
+                                    const skcode2 = app.enUnicode(keys[this.data.dProgress.skeyIArr[i3 - 1]])
+                                    const skcode3 = app.enUnicode(keys[ski3])
+                                    if (ski1 >= 0 && infos[skcode2].c > 0 && infos[skcode3].c > 0 && Math.random() > 0.5) {
+                                        this.data.dProgress.skeyIArr[i1] = this.data.dProgress.skeyIArr[i3]
+                                        this.data.dProgress.skeyIArr[i3] = ski1
+                                        ski1 = -1
                                     }
                                 }
                             }
                         }
                     })
-                    this.data.dProgress.skeyIArr.sort(()=>{return parseInt(Math.random()*3)-1})
+                    this.data.dProgress.skeyIArr.sort(() => {
+                        return parseInt(Math.random() * 3) - 1
+                    })
                     app.data.mlog.info("new progress arr", this.data.dProgress.skeyIArr,
-                        this.data.dProgress.skeyIArr.map(ski=>infos[app.enUnicode(keys[ski])].c))
+                        this.data.dProgress.skeyIArr.map(ski => infos[app.enUnicode(keys[ski])].c))
                     this.data.dProgress.thisProgress = -1
                     this.data.dProgress.saveProgress = -1
                     this.data.dProgress.time = tday
@@ -279,36 +281,36 @@ Page({
         }
         return grIArr
     },
-    clickPri:function (){
-        try{
-            if(this.data.errStyle == ""&&this.data.dProgress.thisProgress>0){
-                this.data.dProgress.thisProgress-=1
+    clickPri: function () {
+        try {
+            if (this.data.errStyle == "" && this.data.dProgress.thisProgress > 0) {
+                this.data.dProgress.thisProgress -= 1
                 this.setData(this.data)
                 this.refushMode()
             }
-        }catch (e){
+        } catch (e) {
             app.data.mlog.err(e)
         }
     },
-    clickNext:function (){
-        try{
-            if(this.data.errStyle == ""&&this.data.dProgress.thisProgress<=this.data.dProgress.saveProgress){
-                this.data.dProgress.thisProgress+=1
+    clickNext: function () {
+        try {
+            if (this.data.errStyle == "" && this.data.dProgress.thisProgress <= this.data.dProgress.saveProgress) {
+                this.data.dProgress.thisProgress += 1
                 this.setData(this.data)
                 this.refushMode()
             }
-        }catch (e){
+        } catch (e) {
             app.data.mlog.err(e)
         }
     },
-    clickLast:function (){
-        try{
-            if(this.data.errStyle == ""&&this.data.dProgress.thisProgress<=this.data.dProgress.saveProgress){
-                this.data.dProgress.thisProgress=this.data.dProgress.saveProgress+1
+    clickLast: function () {
+        try {
+            if (this.data.errStyle == "" && this.data.dProgress.thisProgress <= this.data.dProgress.saveProgress) {
+                this.data.dProgress.thisProgress = this.data.dProgress.saveProgress + 1
                 this.setData(this.data)
                 this.refushMode()
             }
-        }catch (e){
+        } catch (e) {
             app.data.mlog.err(e)
         }
     },
@@ -333,7 +335,7 @@ Page({
                     || this.data.dProgress.thisProgress == skeyIArr.length - 1)//进度条即将结束
             ) {
                 //to err progress
-                this.data.dProgress.thisProgress=progress
+                this.data.dProgress.thisProgress = progress
                 this.data.errStyle = "background:rgba(255,0,0,0.2)"
                 this.setData(this.data)
             } else if (skeyIArr.length - 1 > this.data.dProgress.thisProgress) {
@@ -341,13 +343,14 @@ Page({
                 progress = this.data.dProgress.thisProgress += 1
                 this.setData(this.data)
             } else {
-                const randomTo=()=>{
+                const randomTo = () => {
                     //三期复习结束,进入随机学习模式,不会记录分数
                     app.showModal(msg + " 是否随机读取进度?", () => {
                         this.data.dProgress.thisProgress = parseInt(Math.random() * skeyIArr.length)
                         this.setData(this.data)
                         this.next1()
-                    }, () => {})
+                    }, () => {
+                    })
                 }
                 //end
                 progress = -1
@@ -356,7 +359,8 @@ Page({
                     app.showModal(msg + " 是否继续复习?", () => {
                         this.refushProgress(true)
                         this.next1()
-                    }, () => {})
+                    }, () => {
+                    })
                 } else {
                     randomTo()
                 }
@@ -378,8 +382,8 @@ Page({
             const keys = alldata.keys
             const infos = alldata.infos
             //check skey index
-            if(skeyIndex==null){
-                skeyIndex=this.data.dProgress.skeyIArr[this.data.dProgress.thisProgress]
+            if (skeyIndex == null) {
+                skeyIndex = this.data.dProgress.skeyIArr[this.data.dProgress.thisProgress]
             }
             //check skey
             if (typeof skey == "string") {
@@ -394,13 +398,21 @@ Page({
                 //get view type by c
                 const skcode = app.enUnicode(skey)
                 const wcount = (infos[skcode].c > 0 ? parseInt(infos[skcode].c) : 0)
-                const fl=(this.data.errStyle!=""?wcount-1:wcount)//err:c-1
+                const fl = (this.data.errStyle != "" ? wcount - 1 : wcount)//err:c-1
                 if (viewType2 == null) {
                     viewType2 = SETTINGS.fzkts[fl > FZK_MAX ? parseInt(SETTINGS.fzkts.length * Math.random()) : fl]
                 }
+                //check spelling is null
+                var srcType = viewType2[0]
+                const srcVal = infos[skcode][srcType]
+                if (typeof srcVal == "string" && srcVal.trim() > 0) {
+
+                } else {
+                    srcType = SETTINGS.learnkey2
+                }
 
                 //refush dAnswer
-                this.data.dAnswer = this.getOptionInfo(infos[skcode], skcode, viewType2[0])
+                this.data.dAnswer = this.getOptionInfo(infos[skcode], skcode, srcType)
                 this.data.dAnswer.count = wcount
                 this.data.dAnswer.skeyIndex = skeyIndex
 
@@ -424,7 +436,7 @@ Page({
                     const firstWordIArr = keys.map((skey1, ski) => skey1 != skey
                     && (
                         skey1.startsWith(skey.split("")[0])//first word
-                        ||(skey.length>3&&skey1.endsWith(skey.substr(skey.length-3)))//last word
+                        || (skey.length > 3 && skey1.endsWith(skey.substr(skey.length - 3)))//last word
                     ) ? ski : -1).filter(ski => ski >= 0)
                     while (firstWordIArr.length < 3) {
                         const ski = parseInt(Math.random() * keys.length)
@@ -455,10 +467,10 @@ Page({
                 //edit type open mac
                 if (viewType2[1] == "edit") {
                     this.data.dTools.mac.isShow = true
-                    this.data.dTools.play.isShow=true
+                    this.data.dTools.play.isShow = true
                 } else {
                     this.data.dTools.mac.isShow = false
-                    this.data.dTools.play.isShow=false
+                    this.data.dTools.play.isShow = false
                 }
                 this.setData(this.data)
             }
@@ -603,29 +615,29 @@ Page({
             app.data.mlog.err(e1)
         }
     },
-    errTip:function (){
-        try{
-            const infoData=app.data.mdb.query1({field: {infos: true}}).infos[this.data.dAnswer.skcode]
-            if(this.data.dAnswer.text!=null){
-                if(infoData.spelling!=null){
+    errTip: function () {
+        try {
+            const infoData = app.data.mdb.query1({field: {infos: true}}).infos[this.data.dAnswer.skcode]
+            if (this.data.dAnswer.text != null) {
+                if (infoData.spelling != null) {
                     //tip by spelling
-                    const spelling=infoData.spelling.split(",").join("+")
-                    if(this.data.dAnswer.text!=spelling){
-                        this.data.dAnswer.text=spelling
+                    const spelling = infoData.spelling.split(",").join("+")
+                    if (this.data.dAnswer.text != spelling) {
+                        this.data.dAnswer.text = spelling
                     }
                 }
-            }else if(this.data.dAnswer.imgPath.endsWith("voice.svg")){
+            } else if (this.data.dAnswer.imgPath.endsWith("voice.svg")) {
                 //tip by skey
-                this.data.dAnswer.text=infoData[SETTINGS.learnkey]
-            }else {
+                this.data.dAnswer.text = infoData[SETTINGS.learnkey]
+            } else {
                 //tip by img
-                const mediaPath=app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode,"image",infoData["image"])
-                if(mediaPath!=null){
-                    this.data.dAnswer.imgPath=mediaPath
+                const mediaPath = app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode, "image", infoData["image"])
+                if (mediaPath != null) {
+                    this.data.dAnswer.imgPath = mediaPath
                 }
             }
             this.setData(this.data)
-        }catch (e) {
+        } catch (e) {
             app.data.mlog.err(e)
         }
     },
@@ -669,14 +681,14 @@ Page({
                 app.data.mvoice.playSync("/voices/ok.mp3")
             } else {
                 app.data.mvoice.playSync("/voices/no.mp3")
-                const eProgress=this.data.dProgress.thisProgress
+                const eProgress = this.data.dProgress.thisProgress
                 //check is ee
-                if(this.data.errProgressArr[0]==eProgress){
+                if (this.data.errProgressArr[0] == eProgress) {
                     //tip err
                     this.errTip()
-                }else{
+                } else {
                     //save err progress
-                    this.data.errProgressArr.splice(0,0,eProgress)
+                    this.data.errProgressArr.splice(0, 0, eProgress)
                     this.setData(this.data)
                 }
             }
@@ -764,7 +776,7 @@ Page({
                     this.data.errProgressArr.splice(this.data.errProgressArr.indexOf(fprogress), 1)
                     this.data.errStyle = ""
                     //to last
-                    this.data.dProgress.thisProgress=this.data.dProgress.saveProgress
+                    this.data.dProgress.thisProgress = this.data.dProgress.saveProgress
                     this.setData(this.data)
                 }
             }
