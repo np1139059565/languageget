@@ -51,6 +51,9 @@ page {
 .c-td-input{
   border-bottom: 1px solid;
 }
+.c-t-option{
+  padding: 0 5vw;
+}
 
 .c-mask{
   width: 100%;
