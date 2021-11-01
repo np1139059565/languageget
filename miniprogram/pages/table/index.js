@@ -36,7 +36,7 @@ Page({
                     text: 10,
                     ev: "tableSwitchPageLength",
                     evData: ["5", "20", "40", "80", "5000"],
-                    style:"width:20vw"
+                    style:"width:15vw"
                 },
                 first: {text: "<<", ev: "tableToPage", evData: -999},
                 pri: {text: "<", ev: "tableToPage", evData: -1},

@@ -52,7 +52,7 @@ page {
   border-bottom: 1px solid;
 }
 .c-t-option{
-  min-width: 16vw;
+  min-width: 12.5vw;
   text-align: center;
 }
 
