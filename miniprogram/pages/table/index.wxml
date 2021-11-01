@@ -37,7 +37,7 @@
         </view>
 <!--        table options-->
         <view class="c-tr">
-            <view class="c-click c-td" wx:for="{{dTable.options}}" wx:for-item="item">
+            <view class="c-click c-td" wx:for="{{dTable.options}}" wx:for-item="item" style="padding-left:0">
                 <input class="c-t-option" wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}"
                        data-event1-data1="{{item.evData}}" value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
                 <view class="c-t-option" wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}"
