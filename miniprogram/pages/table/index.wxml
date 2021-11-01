@@ -37,10 +37,10 @@
         </view>
 <!--        table options-->
         <view class="c-tr">
-            <view class="c-click c-td c-t-option" wx:for="{{dTable.options}}" wx:for-item="item">
+            <view class="c-click c-td c-t-option" wx:for="{{dTable.options}}" wx:for-item="item"  style="{{item.style}}">
                 <input wx:if="{{item.type=='input'}}" catchinput="{{item.ev}}" data-event1-data1="{{item.evData}}"
-                       value="{{item.text}}" type="{{item.inputType}}" style="{{item.style}}"/>
-                <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}" style="{{item.style}}">{{item.text}}</view>
+                       value="{{item.text}}" type="{{item.inputType}}"/>
+                <view wx:else catchtap="{{item.ev}}" data-event1-data1="{{item.evData}}">{{item.text}}</view>
             </view>
         </view>
     </view>
