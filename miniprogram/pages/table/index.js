@@ -35,14 +35,15 @@ Page({
                 pageLength: {
                     text: 10,
                     ev: "tableSwitchPageLength",
-                    evData: ["5", "20", "40", "80", "5000"]
+                    evData: ["5", "20", "40", "80", "5000"],
+                    style:"min-width:0"
                 },
                 first: {text: "<<", ev: "tableToPage", evData: -999},
                 pri: {text: "<", ev: "tableToPage", evData: -1},
                 thisPage: {text: 1, ev: "tableToPage", type: "input", inputType: "number",
-                    style: "width:10vw;text-align:right;padding:0"},
-                sp: {text: "/",style:"padding:0"},
-                maxPage: {text: 1,style:"padding:0"},
+                    style: "width:10vw;text-align:right;min-width:0"},
+                sp: {text: "/",style:"min-width:0"},
+                maxPage: {text: 1,style:"min-width:0"},
                 next: {text: ">", ev: "tableToPage", evData: 1},
                 last: {text: ">>", ev: "tableToPage", evData: 999},
             },
