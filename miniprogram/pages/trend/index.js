@@ -49,31 +49,31 @@ Page({
             style: "",
             dButtons: {
                 c: {
-                    text: "count",
+                    text: "总数",
                     ev: "",
                     evData: "c",
                     style: "color:green"
                 },
                 e: {
-                    text: "error",
+                    text: "错误数",
                     ev: "",
                     evData:"e",
                     style: "color:green"
                 },
                 d: {
-                    text: "day",
+                    text: "天",
                     ev: "",
                     evData: "d",
                     style: "color:green"
                 },
                 w: {
-                    text: "week",
+                    text: "周",
                     ev: "",
                     evData: "w",
                     style: ""
                 },
                 m: {
-                    text: "month",
+                    text: "月",
                     ev: "",
                     evData: "m",
                     style: ""

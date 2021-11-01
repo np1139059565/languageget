@@ -16,11 +16,11 @@ Page({
             //init default button
             this.data.dTrArr = [
                 {
-                    k: "to page",
+                    k: "",
                     tdArr: [
                         {
                             type: "button",
-                            text: "列表",
+                            text: "单词列表",
                             ev: "openPage",
                             evData: "/pages/table/index",
                         },
@@ -34,7 +34,7 @@ Page({
                     ]
                 },
                 {
-                    k: "subject",
+                    k: "单词本",
                     tdArr: [
                         {
                             type: "button",
@@ -173,7 +173,7 @@ Page({
         try {
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.text == "列表")[0].type = "button"//open table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "button"//open table button
                     //refush title
                     wx.setNavigationBarTitle({
                         title: app.data.mdb.query1({field: {subject: true}}).subject
@@ -191,7 +191,7 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 } else if (app.data.mdb.getSubjectId() == null) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.text == "列表")[0].type = ""//close table button
+                    this.data.dTrArr[0].tdArr.filter(td => td.evData == "/pages/table/index")[0].type = ""//close table button
                     wx.setNavigationBarTitle({
                         title: "settings"
                     })
@@ -306,7 +306,7 @@ Page({
             })
             //add new head button
             this.data.dTrArr.push({
-                k: "add head",
+                k: "新增",
                 tdArr: [
                     {
                         type: "input",
@@ -376,7 +376,7 @@ Page({
             })
             //add new fzk button
             this.data.dTrArr.push({
-                k: "add fzk",
+                k: "新增",
                 tdArr: [
                     {
                         type: "button",
@@ -433,7 +433,7 @@ Page({
             })
 
             this.data.dTrArr.push({
-                k: "add input",
+                k: "新增",
                 tdArr: [{
                     pickerval: 0,
                     type: "picker",
