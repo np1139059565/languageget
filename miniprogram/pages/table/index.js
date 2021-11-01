@@ -36,12 +36,12 @@ Page({
                     text: 10,
                     ev: "tableSwitchPageLength",
                     evData: ["5", "20", "40", "80", "5000"],
-                    style:"min-width:0"
+                    style:"width:20vw"
                 },
                 first: {text: "<<", ev: "tableToPage", evData: -999},
                 pri: {text: "<", ev: "tableToPage", evData: -1},
                 thisPage: {text: 1, ev: "tableToPage", type: "input", inputType: "number",
-                    style: "width:10vw;text-align:right;min-width:0"},
+                    style: "width:20vw;text-align:right"},
                 sp: {text: "/",style:"min-width:0"},
                 maxPage: {text: 1,style:"min-width:0"},
                 next: {text: ">", ev: "tableToPage", evData: 1},

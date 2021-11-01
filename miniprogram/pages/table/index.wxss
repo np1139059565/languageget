@@ -52,7 +52,8 @@ page {
   border-bottom: 1px solid;
 }
 .c-t-option{
-  min-width: 20vw;
+  min-width: 16vw;
+  text-align: center;
 }
 
 .c-mask{
