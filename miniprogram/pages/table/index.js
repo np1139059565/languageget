@@ -40,7 +40,7 @@ Page({
                 first: {text: "<<", ev: "tableToPage", evData: -999},
                 pri: {text: "<", ev: "tableToPage", evData: -1},
                 thisPage: {text: 1, ev: "tableToPage", type: "input", inputType: "number", style: "text-align:right"},
-                sp: {text: "/",style:"min-width:auto"},
+                sp: {text: "/",style:"padding:0"},
                 maxPage: {text: 1},
                 next: {text: ">", ev: "tableToPage", evData: 1},
                 last: {text: ">>", ev: "tableToPage", evData: 999},
