@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jest": "^27.3.1",
+    "miniprogram-automator": "^0.11.0"
+  }
+}

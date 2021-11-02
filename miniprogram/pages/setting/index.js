@@ -16,6 +16,23 @@ Page({
             //init default button
             this.data.dTrArr = [
                 {
+                    k: "课本",
+                    tdArr: [
+                        {
+                            type: "button",
+                            text: "↑",
+                            ev: "uploadSubjectToLocal",
+                            // evData:i,
+                        },
+                        {
+                            type: "button",
+                            text: "↓",
+                            ev: "downYunSubject",
+                            // evData:i,
+                        }
+                    ]
+                },
+                {
                     k: "",
                     tdArr: [
                         {
@@ -31,23 +48,6 @@ Page({
                         //     ev: "openPage",
                         //     evData: "/pages/file/index",
                         // }
-                    ]
-                },
-                {
-                    k: "单词本",
-                    tdArr: [
-                        {
-                            type: "button",
-                            text: "↑",
-                            ev: "uploadSubjectToLocal",
-                            // evData:i,
-                        },
-                        {
-                            type: "button",
-                            text: "↓",
-                            ev: "downYunSubject",
-                            // evData:i,
-                        }
                     ]
                 }
             ]

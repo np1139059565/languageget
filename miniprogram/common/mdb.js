@@ -443,7 +443,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
         //create subject
         if (isShowLoading) {
             wx.showLoading({
-                title: '检查单词本...',
+                title: '检查课本...',
                 mask: true//防止触摸
             })
         }
@@ -496,7 +496,7 @@ function uploadLocalSubjectToYunSync(subjectid, callback, isShowLoading, upProgr
         if (isShowLoading) {
             wx.hideLoading()
             wx.showLoading({
-                title: '上传单词本...',
+                title: '上传课本...',
                 mask: true//防止触摸
             })
         }
@@ -695,6 +695,7 @@ function downloadYunSubjectToLocalSync(callback, isShowLoading,upProgressEvent) 
         try {
             if (code && arr != null && arr[0] != null) {
                 const newSubjectObj = arr[0]
+                const filterField=["counts","golds","progress"]
                 //write data to local file by field
                 Object.keys(newSubjectObj).map((field,i)=>{
                     //up progress
@@ -702,7 +703,8 @@ function downloadYunSubjectToLocalSync(callback, isShowLoading,upProgressEvent) 
                         upProgressEvent(Object.keys(newSubjectObj).length,i*0.5)
                     }
                     //write field
-                    const wcode = MY_FILE.writeFile(getSubjectPath() + field, JSON.stringify(newSubjectObj[field]))
+                    const fieldConter=(filterField.indexOf(field)>=0?"{}":JSON.stringify(newSubjectObj[field]))
+                    const wcode = MY_FILE.writeFile(getSubjectPath() + field, fieldConter)
                     if (!wcode) {
                         code = false
                         err("write data is err", field)
