@@ -15,6 +15,9 @@ Page({
         editorCtx:null,
         editConter:""
     },
+    t:function (g){
+        app.data.mlog.info(g)
+    },
     onLoad: function () {
         try {
             //init dir
