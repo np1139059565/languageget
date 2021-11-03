@@ -395,12 +395,18 @@ Page({
             })
             skey = keys[skeyIndex]
             if (skey != null) {
-                //get view type by c
                 const skcode = app.enUnicode(skey)
                 const wcount = (infos[skcode].c > 0 ? parseInt(infos[skcode].c) : 0)
                 const fl = (this.data.errStyle != "" ? wcount - 1 : wcount)//err:c-1
+                //get view type by c
                 if (viewType2 == null) {
-                    viewType2 = SETTINGS.fzkts[fl > FZK_MAX ? parseInt(SETTINGS.fzkts.length * Math.random()) : fl]
+                    var viewTypeArr=SETTINGS.fzkts
+                    var VLMax=FZK_MAX
+                    if(typeof infos[skcode].filterFZK=="string"&&infos[skcode].filterFZK.trim()!=""){
+                        viewTypeArr=infos[skcode].filterFZK.split(";").map(vt2=>vt2.split(","))
+                        VLMax=viewTypeArr.length
+                    }
+                    viewType2 = viewTypeArr[fl > VLMax ? parseInt(viewTypeArr.length * Math.random()) : fl]
                 }
                 //check spelling is null
                 var srcType = viewType2[0]
