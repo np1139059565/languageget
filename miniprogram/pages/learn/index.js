@@ -402,6 +402,7 @@ Page({
                 if (viewType2 == null) {
                     var viewTypeArr=SETTINGS.fzkts
                     var VLMax=FZK_MAX
+                    //get view type by filterFZK
                     if(typeof infos[skcode].filterFZK=="string"&&infos[skcode].filterFZK.trim()!=""){
                         viewTypeArr=infos[skcode].filterFZK.split(";").map(vt2=>vt2.split(","))
                         VLMax=viewTypeArr.length
