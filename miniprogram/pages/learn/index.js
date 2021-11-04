@@ -401,9 +401,9 @@ Page({
                 if (viewType2 == null) {
                     var viewTypeArr=SETTINGS.fzkts
                     var VLMax=FZK_MAX
-                    //get view type by filterFZK
+                    //get view type by filterFZK "image->en;en->zhvoice"
                     if(typeof infos[skcode][FILTER_FZK]=="string"&&infos[skcode][FILTER_FZK].trim()!=""){
-                        viewTypeArr=infos[skcode][FILTER_FZK].split(";").map(vt2=>vt2.split(","))
+                        viewTypeArr=infos[skcode][FILTER_FZK].split(";").map(vt2=>vt2.split("->"))
                         VLMax=viewTypeArr.length
                     }
                     viewType2 = viewTypeArr[fl > VLMax ? parseInt(viewTypeArr.length * Math.random()) : fl]
