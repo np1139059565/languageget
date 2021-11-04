@@ -175,7 +175,6 @@ Page({
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
                     //open table button
-                    console.info("xxjjjjj",this.data.dTrArr)
                     this.data.dTrArr.map(trInfo=>{
                         const tdInfoArr=trInfo.tdArr.filter(td => td.evData == "/pages/table/index")
                         if(tdInfoArr.length>0){
@@ -199,7 +198,13 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 } else if (app.data.mdb.getSubjectId() == null) {
-                    this.data.dTrArr.map(trInfo=>trInfo.tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "")//close table button
+                    //close table button
+                    this.data.dTrArr.map(trInfo=>{
+                        const tdInfoArr=trInfo.tdArr.filter(td => td.evData == "/pages/table/index")
+                        if(tdInfoArr.length>0){
+                            tdInfoArr[0].type = ""
+                        }
+                    })
                     wx.setNavigationBarTitle({
                         title: "settings"
                     })
