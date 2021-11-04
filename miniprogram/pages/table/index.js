@@ -505,8 +505,9 @@ Page({
                             this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                 .map((inputInfo) => {
                                     const inputStrArr = inputInfo.inputStr.split(",")
-                                    if (typeof inputStrArr[i] == "string" && infos[skcode][inputInfo.tip] != inputStrArr[i]) {
-                                        msg += ("'" + skey + "." + inputInfo.tip + ":" + infos[skcode][inputInfo.tip] + ">" + inputStrArr[i])
+                                    const inpuv=(inputStrArr[i]==null&&inputStrArr.length==1?inputStrArr[0]:inputStrArr[i])
+                                    if (typeof inpuv == "string" && infos[skcode][inputInfo.tip] != inpuv) {
+                                        msg += ("'" + skey + "." + inputInfo.tip + ":" + infos[skcode][inputInfo.tip] + ">" + inpuv)
                                     }
                                 })
                             if (msg != "") {
@@ -528,8 +529,9 @@ Page({
                                     this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                         .map(inputInfo => {
                                             const inputStrArr = inputInfo.inputStr.split(",")
-                                            otherInputInfo[inputInfo.tip] = (typeof inputStrArr[i] == "string" && infos[skcode][inputInfo.tip] != inputStrArr[i] ?
-                                                inputStrArr[i] : infos[skcode][inputInfo.tip])
+                                            const inpuv=(inputStrArr[i]==null&&inputStrArr.length==1?inputStrArr[0]:inputStrArr[i])
+                                            otherInputInfo[inputInfo.tip] = (typeof inpuv == "string" && infos[skcode][inputInfo.tip] != inpuv ?
+                                                inpuv : infos[skcode][inputInfo.tip])
                                         })
                                     this.openLineEdit(null, skey, otherInputInfo)
                                     this.closeLineEdit(true)

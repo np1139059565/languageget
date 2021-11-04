@@ -1,0 +1,23 @@
+{
+  "name": "languageget",
+  "version": "1.0.0",
+  "description": "一款微信小程序版的“罗塞塔”或“百词斩”学习语言的软件",
+  "main": "jest.config.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/np1139059565/languageget.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/np1139059565/languageget/issues"
+  },
+  "homepage": "https://github.com/np1139059565/languageget#readme",
+  "dependencies": {
+    "jest": "^27.3.1"
+  }
+}
