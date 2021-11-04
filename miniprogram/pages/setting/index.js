@@ -173,7 +173,14 @@ Page({
         try {
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
-                    this.data.dTrArr.map(trInfo=>trInfo.tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "button")//open table button
+                    //open table button
+                    this.data.dTrArr.map(trInfo=>{
+                        const tdInfoArr=trInfo.tdArr.filter(td => td.evData == "/pages/table/index")
+                        console.info("xxxxxxxxxxxxxxxxxxxxxxxx",trInfo,tdInfoArr)
+                        if(tdInfoArr.length>0){
+                            tdInfoArr[0].type = "button"
+                        }
+                    })
                     //refush title
                     wx.setNavigationBarTitle({
                         title: app.data.mdb.query1({field: {subject: true}}).subject
