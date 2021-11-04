@@ -1,8 +1,6 @@
 //index.js
-const app = getApp()
-var SETTINGS=null
-var KEYS=[]
-var INFOS={}
+const app = getApp(),IMAGE="image"
+var SETTINGS={},KEYS=[],INFOS={}
 Page({
     data: {
         dProgress: {
@@ -69,7 +67,7 @@ Page({
                   const skey=KEYS[this.data.dProgress.skeyIArr[this.data.dProgress.thisProgress]]
                   const skcode=app.enUnicode(skey)
                   const infoData=INFOS[skcode]
-                  var mediaPath=app.data.mdb.getMediaPathByMType(skcode,"image",infoData["image"])
+                  var mediaPath=app.data.mdb.getMediaPathByMType(skcode,IMAGE,infoData[IMAGE])
                   if(mediaPath==null){
                       mediaPath="/images/inull.jpg"
                   }

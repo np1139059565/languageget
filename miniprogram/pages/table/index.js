@@ -1,10 +1,7 @@
 //index.js
 const app = getApp()
-const SEARCH_ALL="auto"
-var SETTINGS = {}
-var MEDIA_TYPE_ARR = ["image", "zhvoice", "envoice"]
-var VOICE_TYPE_ARR = ["zhvoice", "envoice"]
-var SORT_TYPE_ARR = ["e", "c", "updatetime"]
+const SEARCH_ALL="auto",IMAGE="image",VOICE="voice"
+var SETTINGS = {},MEDIA_TYPE_ARR = [],VOICE_TYPE_ARR = [],SORT_TYPE_ARR = []
 Page({
     data: {
         dProgress:{
@@ -261,7 +258,7 @@ Page({
                         }
                     }
                     //image
-                    if (headStr == "image") {
+                    if (headStr == IMAGE) {
                         if (skcode != "") {
                             lineInfo.mediaInfo[headStr].evData2 = skcode
                             lineInfo.mediaInfo[headStr].ev2 = "switchLocalImage"
@@ -649,14 +646,14 @@ Page({
                         const upSubjectCallback=()=>{
                             //up subject
                             app.data.mdb.update1({
-                                infos: {[app.enUnicode(skey)]: {[langType + "voice"]: SUFFIX}}
+                                infos: {[app.enUnicode(skey)]: {[voiceType]: SUFFIX}}
                             })
                         }
                         const SUFFIX="mp3"
                         const voicePath = app.data.mdb.getMediaPathByMType(skcode, voiceType, SUFFIX, false)
                         //check voice file is not find
                         if (app.data.mfile.isExist(voicePath) != true) {
-                            const langType = voiceType.toLowerCase().split("voice")[0]
+                            const langType = voiceType.toLowerCase().split(VOICE)[0]
                             app.data.mvoice.downloadVoiceByTTSSync(lineInfo[langType], langType, (gcode, vurl) => {
                                 if (gcode) {
                                     app.data.mfile.downUrlFileSync(vurl, voicePath, (dcode) => {
@@ -700,7 +697,7 @@ Page({
             const skey = this.data.dTable.lineArr[parseInt(tmp[0])][SETTINGS.learnkey]
             const skcode = app.enUnicode(skey)
             const infoData = app.data.mdb.query1({field: {infos: true}}).infos[skcode]
-            const langType = tmp[1].split("voice")[0]
+            const langType = tmp[1].split(VOICE)[0]
             const voicePath = app.data.mdb.getMediaPathByMType(skcode, tmp[1], "mp3", false)
             //use selected get type
             app.showActionSheet(["选择音频文件", "合成语音","通过URL下载"], (sval,i) => {
@@ -757,7 +754,7 @@ Page({
                 if(pcode){
                     //update subject
                     app.data.mdb.update1({
-                        infos: {[app.enUnicode(skey)]: {[langType + "voice"]: "mp3"}}
+                        infos: {[app.enUnicode(skey)]: {[langType + VOICE]: "mp3"}}
                     })
                     mcallback(true)
                 }else{
@@ -777,7 +774,7 @@ Page({
               //play voice test
               const tmp = e.currentTarget.dataset.event1Data1.split(";")//tmp:lineIndex;voiceType
               const skey = this.data.dTable.lineArr[parseInt(tmp[0])][SETTINGS.learnkey]
-              const langType = tmp[1].split("voice")[0]
+              const langType = tmp[1].split(VOICE)[0]
               this.switchLocalVoinceByPathSync(skey,langType,inputUrl,(scode)=>{
                   if(scode){
                       //download voice
@@ -793,7 +790,7 @@ Page({
                               //clean
                               app.data.mfile.rmPath(voicePath)
                               app.data.mdb.update1({
-                                  infos: {[app.enUnicode(skey)]: {[langType + "voice"]: ""}}
+                                  infos: {[app.enUnicode(skey)]: {[langType + VOICE]: ""}}
                               })
                           }
                       })
@@ -858,7 +855,7 @@ Page({
         try {
             const callback = (imgPath1) => {
                 const imgSuffix = imgPath1.split(".").reverse()[0]
-                const mediaPath = app.data.mdb.getMediaPathByMType(skcode, "image", imgSuffix, false)
+                const mediaPath = app.data.mdb.getMediaPathByMType(skcode, IMAGE, imgSuffix, false)
                 //copy file
                 if (app.data.mfile.copyFile(imgPath1, mediaPath)) {
                     //update subject
@@ -1074,8 +1071,8 @@ Page({
             const VSuffix = "mp3"
             VOICE_TYPE_ARR.map(headStr => {
                 //check media path
-                const voicePath = app.data.mdb.getMediaPathByMType(skcode, headStr, lineInfo[headStr], false)
-                const langType = headStr.toLowerCase().split("voice")[0]
+                // const voicePath = app.data.mdb.getMediaPathByMType(skcode, headStr, lineInfo[headStr], false)
+                // const langType = headStr.toLowerCase().split(VOICE)[0]
                 //check voice
                 // if (app.data.mfile.isExist(voicePath) == false || lineInfo[langType] != lineInfo.inputInfo[langType].text) {
                 //     this.downMP3ByTTSSync(skey, lineInfo.inputInfo[langType].text, langType, voicePath,

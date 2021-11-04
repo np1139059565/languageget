@@ -1,7 +1,6 @@
 //index.js
-const app = getApp()
-var SETTINGS = null
-var FZK_MAX = 22
+const app = getApp(),FILTER_FZK="filterFZK",IMAGE="image"
+var SETTINGS = {},FZK_MAX = 22
 
 Page({
     data: {
@@ -403,8 +402,8 @@ Page({
                     var viewTypeArr=SETTINGS.fzkts
                     var VLMax=FZK_MAX
                     //get view type by filterFZK
-                    if(typeof infos[skcode].filterFZK=="string"&&infos[skcode].filterFZK.trim()!=""){
-                        viewTypeArr=infos[skcode].filterFZK.split(";").map(vt2=>vt2.split(","))
+                    if(typeof infos[skcode][FILTER_FZK]=="string"&&infos[skcode][FILTER_FZK].trim()!=""){
+                        viewTypeArr=infos[skcode][FILTER_FZK].split(";").map(vt2=>vt2.split(","))
                         VLMax=viewTypeArr.length
                     }
                     viewType2 = viewTypeArr[fl > VLMax ? parseInt(viewTypeArr.length * Math.random()) : fl]
@@ -423,8 +422,8 @@ Page({
                 this.data.dAnswer.count = wcount
                 this.data.dAnswer.skeyIndex = skeyIndex
 
-                //switch mode type
-                if (viewType2[1].startsWith("edi")) {
+                //check view type 2 is edit
+                if (viewType2[1].toUpperCase().startsWith("EDI")) {
                     //mode2
                     this.data.dMode.name = "mode-02"
                     this.data.dMode.mode2Edits = this.getEditInfoArr(skey, viewType2[1],
@@ -497,7 +496,7 @@ Page({
                 imgPath: null// "/images/inull.jpg"
             }
             const mediaPath = app.data.mdb.getMediaPathByMType(skcode, viewType, infoData[viewType], true)
-            if (viewType == "image") {
+            if (viewType == IMAGE) {
                 modeInfo.imgPath = mediaPath != null ? mediaPath : "/images/inull.jpg"
             } else if (SETTINGS.voicetypes.indexOf(viewType) >= 0) {
                 modeInfo.imgPath = "/images/" + (mediaPath != null ? "voice.svg" : "vnull.svg")
@@ -638,7 +637,7 @@ Page({
                 this.data.dAnswer.text = infoData[SETTINGS.learnkey]
             } else {
                 //tip by img
-                const mediaPath = app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode, "image", infoData["image"])
+                const mediaPath = app.data.mdb.getMediaPathByMType(this.data.dAnswer.skcode, IMAGE, infoData[IMAGE])
                 if (mediaPath != null) {
                     this.data.dAnswer.imgPath = mediaPath
                 }
