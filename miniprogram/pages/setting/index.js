@@ -173,7 +173,7 @@ Page({
         try {
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "button"//open table button
+                    this.data.dTrArr.map(tdArr=>tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "button")//open table button
                     //refush title
                     wx.setNavigationBarTitle({
                         title: app.data.mdb.query1({field: {subject: true}}).subject
@@ -191,7 +191,7 @@ Page({
                         app.data.mlog.err(e2)
                     }
                 } else if (app.data.mdb.getSubjectId() == null) {
-                    this.data.dTrArr[0].tdArr.filter(td => td.evData == "/pages/table/index")[0].type = ""//close table button
+                    this.data.dTrArr.map(tdArr=>tdArr.filter(td => td.evData == "/pages/table/index")[0].type = "")//close table button
                     wx.setNavigationBarTitle({
                         title: "settings"
                     })
