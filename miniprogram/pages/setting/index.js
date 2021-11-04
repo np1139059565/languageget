@@ -51,6 +51,7 @@ Page({
                     ]
                 }
             ]
+            this.setData(this.data)
             const dbPath = app.data.mdb.getDBPath()
             //get subject arr
             app.data.mfile.readDir(dbPath).map(subjectId => {
@@ -174,9 +175,9 @@ Page({
             app.data.mdb.switchSubjectSync((code) => {
                 if (code) {
                     //open table button
+                    console.info("xxjjjjj",this.data.dTrArr)
                     this.data.dTrArr.map(trInfo=>{
                         const tdInfoArr=trInfo.tdArr.filter(td => td.evData == "/pages/table/index")
-                        console.info("xxxxxxxxxxxxxxxxxxxxxxxx",trInfo,tdInfoArr)
                         if(tdInfoArr.length>0){
                             tdInfoArr[0].type = "button"
                         }
