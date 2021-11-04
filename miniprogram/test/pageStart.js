@@ -50,5 +50,5 @@ global._wx = {
     page: null
 }
 global.Page = Page
-global.App = App
+// global.App = App
 global.getApp = getApp//() => global._wx.app
