@@ -505,7 +505,9 @@ Page({
                             this.data.DDialog.inputs.filter(inputInfo => inputInfo.tip != SETTINGS.learnkey)
                                 .map((inputInfo) => {
                                     const inputStrArr = inputInfo.inputStr.split(",")
-                                    const inpuv=(inputStrArr[i]==null&&inputStrArr.length==1?inputStrArr[0]:inputStrArr[i])
+                                    //copy first input
+                                    const inpuv=(inputStrArr[i]==null&&typeof inputStrArr[0]=="string"&&inputStrArr[0].trim().length>0?
+                                        inputStrArr[0]:inputStrArr[i])
                                     if (typeof inpuv == "string" && infos[skcode][inputInfo.tip] != inpuv) {
                                         msg += ("'" + skey + "." + inputInfo.tip + ":" + infos[skcode][inputInfo.tip] + ">" + inpuv)
                                     }
