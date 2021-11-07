@@ -1,16 +1,13 @@
 //app.js
 App({
     data: {
-        mlog: require("common/mlog.js"),
-        mfile: require("common/mfile.js"),
-        myun: require("common/myun.js"),
-        mdb: require("common/mdb.js"),
-        mvoice:require("common/mvoice.js")
+        rootPath:""
     },
     onLaunch: function () {
         //这个函数里不能有弹框之类的初始化操作
         try {
             //init log
+            this.data.mlog= require(this.data.rootPath+"common/mlog.js")
             console.info("init mlog...")
             this.data.mlog.init1(
             //     null,
@@ -19,6 +16,11 @@ App({
             // }
             )
             try {
+                this.data.mfile= require(this.data.rootPath+"common/mfile.js")
+                this.data.myun=require(this.data.rootPath+"common/myun.js")
+                this.data.mdb= require(this.data.rootPath+"common/mdb.js")
+                this.data.mvoice=require(this.data.rootPath+"common/mvoice.js")
+                this.setData(this.data)
                 this.data.mlog.info("init common events...")
                 this.data.mfile.init1(this.data.mlog)
                 this.data.myun.init1(this.data.mlog,this.data.mfile)

@@ -1,6 +1,6 @@
 //index.js
-const app = getApp(),FILTER_FZK="filterFZK",IMAGE="image"
-var SETTINGS = {},FZK_MAX = 22
+const app = getApp(), FILTER_FZK = "filterFZK", IMAGE = "image"
+var SETTINGS = {}, FZK_MAX = 22
 
 Page({
     data: {
@@ -399,12 +399,12 @@ Page({
                 const fl = (this.data.errStyle != "" ? wcount - 1 : wcount)//err:c-1
                 //get view type by c
                 if (viewType2 == null) {
-                    var viewTypeArr=SETTINGS.fzkts
-                    var VLMax=FZK_MAX
+                    var viewTypeArr = SETTINGS.fzkts
+                    var VLMax = FZK_MAX
                     //get view type by filterFZK "image->en;en->zhvoice"
-                    if(typeof infos[skcode][FILTER_FZK]=="string"&&infos[skcode][FILTER_FZK].trim()!=""){
-                        viewTypeArr=infos[skcode][FILTER_FZK].split(";").map(vt2=>vt2.split("->"))
-                        VLMax=viewTypeArr.length
+                    if (typeof infos[skcode][FILTER_FZK] == "string" && infos[skcode][FILTER_FZK].trim() != "") {
+                        viewTypeArr = infos[skcode][FILTER_FZK].split(";").map(vt2 => vt2.split("->"))
+                        VLMax = viewTypeArr.length
                     }
                     viewType2 = viewTypeArr[fl > VLMax ? parseInt(viewTypeArr.length * Math.random()) : fl]
                 }
@@ -438,11 +438,15 @@ Page({
                     // }
                     //refush mode1 options
                     this.data.dMode.mode1Options = []
-                    //find first word iarr
+                    //find word
                     const firstWordIArr = keys.map((skey1, ski) => skey1 != skey
+                        //by filterWT
+                    && (typeof infos[skey].filterWT == "string" && infos[skey].filterWT.trim() != ""
+                        && infos[skey1].wordtype == infos[skey].filterWT ||
+                        !(typeof infos[skey].filterWT == "string" && infos[skey].filterWT.trim() != ""))
                     && (
-                        skey1.startsWith(skey.split("")[0])//first word
-                        || (skey.length > 3 && skey1.endsWith(skey.substr(skey.length - 3)))//last word
+                        skey1.startsWith(skey.split("")[0])//by first word
+                        || (skey.length > 3 && skey1.endsWith(skey.substr(skey.length - 3)))//by last word
                     ) ? ski : -1).filter(ski => ski >= 0)
                     while (firstWordIArr.length < 3) {
                         const ski = parseInt(Math.random() * keys.length)

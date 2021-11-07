@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/np1139059565/languageget#readme",
   "dependencies": {
-    "jest": "^27.3.1"
+    "jest": "^27.3.1",
+    "rewire": "^5.0.0"
   }
 }
