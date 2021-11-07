@@ -20,7 +20,6 @@ App({
                 this.data.myun=require(this.data.rootPath+"common/myun.js")
                 this.data.mdb= require(this.data.rootPath+"common/mdb.js")
                 this.data.mvoice=require(this.data.rootPath+"common/mvoice.js")
-                this.setData(this.data)
                 this.data.mlog.info("init common events...")
                 this.data.mfile.init1(this.data.mlog)
                 this.data.myun.init1(this.data.mlog,this.data.mfile)
