@@ -506,8 +506,9 @@ Page({
                                 .map((inputInfo) => {
                                     const inputStrArr = inputInfo.inputStr.split(",")
                                     //copy first input
-                                    const inpuv=(inputStrArr[i]==null&&typeof inputStrArr[0]=="string"&&inputStrArr[0].trim().length>0?
-                                        inputStrArr[0]:inputStrArr[i])
+                                    const inpuv=(inputStrArr[i]==null?(
+                                        typeof inputStrArr[0]=="string"&&inputStrArr[0].trim().length>0? inputStrArr[0]:""
+                                    ):inputStrArr[i])
                                     if (typeof inpuv == "string" && infos[skcode][inputInfo.tip] != inpuv) {
                                         msg += ("'" + skey + "." + inputInfo.tip + ":" + infos[skcode][inputInfo.tip] + ">" + inpuv)
                                     }
