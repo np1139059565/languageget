@@ -443,14 +443,15 @@ Page({
                         const skcode1=app.enUnicode(skey1)
                         return (skey1 != skey
                         //by filterWT
-                        && (typeof infos[skcode].filterWT == "string" && infos[skcode].filterWT.trim() != ""
-                            && infos[skcode1].wordtype == infos[skcode].filterWT ||
-                            !(typeof infos[skcode].filterWT == "string" && infos[skcode].filterWT.trim() != ""))
+                        && ((typeof infos[skcode].filterWT == "string" && infos[skcode].filterWT.trim() != ""
+                            && infos[skcode1].wordtype == infos[skcode].filterWT)
                         || (
+                            (typeof infos[skcode].filterWT == "string" && infos[skcode].filterWT.trim() != "")==false&&
                             skey1.startsWith(skey.split("")[0])//by first word
                             || (skey.length > 3 && skey1.endsWith(skey.substr(skey.length - 3)))//by last word
-                        ) ? ski : -1)
+                        )) ? ski : -1)
                     }).filter(ski => ski >= 0)
+                    //
                     while (firstWordIArr.length < 3) {
                         const ski = parseInt(Math.random() * keys.length)
                         if (firstWordIArr.indexOf(ski) < 0 && ski != skeyIndex) {
