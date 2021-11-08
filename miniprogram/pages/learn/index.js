@@ -451,12 +451,14 @@ Page({
                             || (skey.length > 3 && skey1.endsWith(skey.substr(skey.length - 3)))//by last word
                         ) ? ski : -1)
                     }).filter(ski => ski >= 0)
+                    console.info("firstWordIArr....",firstWordIArr)
                     while (firstWordIArr.length < 3) {
                         const ski = parseInt(Math.random() * keys.length)
                         if (firstWordIArr.indexOf(ski) < 0 && ski != skeyIndex) {
                             firstWordIArr.push(ski)
                         }
                     }
+                    console.info("firstWordIArr....2",firstWordIArr)
                     //add other option
                     for (var i = 0; i < 3; i++) {
                         if (firstWordIArr.length > 0) {
